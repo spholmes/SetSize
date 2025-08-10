@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Coincidence Detection using Distances: SILVA data – Estimating Set Size by Cascading Exclusion</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Estimating Set Size by Cascading Exclusion</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../analysis/01-convex-hulls.html"> 
+<span class="menu-text">Convex Hulls</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../analysis/02-coincidence-detection.html"> 
+<span class="menu-text">Minimum Distance distributions</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../analysis/03-bacterialdata.html" aria-current="page"> 
+<span class="menu-text">Bacterial Coincidence</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../analysis/04-prediction-sets-regression.html"> 
+<span class="menu-text">Prediction Sets</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#step-1-prepare-downloaded-data-from-silva-database" id="toc-step-1-prepare-downloaded-data-from-silva-database" class="nav-link" data-scroll-target="#step-1-prepare-downloaded-data-from-silva-database">Step 1: Prepare downloaded data from SILVA database</a>
+  <ul class="collapse">
+  <li><a href="#among-the-bacteria-we-pick-the-top-10-phyla" id="toc-among-the-bacteria-we-pick-the-top-10-phyla" class="nav-link" data-scroll-target="#among-the-bacteria-we-pick-the-top-10-phyla">Among the Bacteria we pick the top 10 phyla</a></li>
+  <li><a href="#we-create-the-random-sample-from-the-10-main-phyla." id="toc-we-create-the-random-sample-from-the-10-main-phyla." class="nav-link" data-scroll-target="#we-create-the-random-sample-from-the-10-main-phyla.">We create the random sample from the 10 main phyla.</a></li>
+  </ul></li>
+  <li><a href="#step-2-alignment-with-penalties" id="toc-step-2-alignment-with-penalties" class="nav-link" data-scroll-target="#step-2-alignment-with-penalties">Step 2: Alignment with penalties</a></li>
+  <li><a href="#step-3-compute-the-within-and-between-distances-and-compare-the-histograms" id="toc-step-3-compute-the-within-and-between-distances-and-compare-the-histograms" class="nav-link" data-scroll-target="#step-3-compute-the-within-and-between-distances-and-compare-the-histograms">Step 3: Compute the within and between distances and compare the histograms</a>
+  <ul class="collapse">
+  <li><a href="#show-the-histograms-of-both-nn-distances" id="toc-show-the-histograms-of-both-nn-distances" class="nav-link" data-scroll-target="#show-the-histograms-of-both-nn-distances">Show the histograms of both nn distances</a></li>
+  </ul></li>
+  <li><a href="#step-4-using-distribution-percentiles-to-find-the-threshold-of-coincidence" id="toc-step-4-using-distribution-percentiles-to-find-the-threshold-of-coincidence" class="nav-link" data-scroll-target="#step-4-using-distribution-percentiles-to-find-the-threshold-of-coincidence">Step 4: Using distribution percentiles to find the threshold of “coincidence”</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Coincidence Detection using Distances: SILVA data</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Distance histogram comparisons and detection of small distance pairs</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>This analysis creates the data we analyse from the SILVA database by taking a random set of 205 sequences to start with, aligning them and choosing the most informative contiguous subsequence of length 450. We take 200 first ones that align correctly and then use those to run the 40/160 cuts many times, we look at the 1st and 5th percentiles. Using the 1st percentil we create a threshold of detection of “very close” species and see that in fact these are all duplicates.</p>
+</section>
+<section id="step-1-prepare-downloaded-data-from-silva-database" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-prepare-downloaded-data-from-silva-database">Step 1: Prepare downloaded data from SILVA database</h2>
+<p>We start by loading the libraries we need, include the Bioconductor package <code>DECIPHER</code> that we use for alignment. To install the Bioconductor package <code>DECIPHER</code> that provides the best alignment function:</p>
+<pre><code>BiocManager::install("DECIPHER")</code></pre>
+<p>We make sure Biostrings is loaded last because of the width function.</p>
+<p>The Silva database <code>silva_nr99_v138.2_toGenus_trainset.fa</code> was downloaded from zenodo (DADA2) benchmark dataset.</p>
+<p>Originally this file should contain only bacteria, but we will check.</p>
+<div class="cell" data-cache-refresh="true">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DECIPHER)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(seqinr)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Biostrings)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Load the SILVA database</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>silva_file <span class="ot">&lt;-</span> <span class="st">"../data/silva_nr99_v138.2_toGenus_trainset.fa"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>silva_seqs <span class="ot">&lt;-</span> <span class="fu">readDNAStringSet</span>(silva_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="among-the-bacteria-we-pick-the-top-10-phyla" class="level3">
+<h3 class="anchored" data-anchor-id="among-the-bacteria-we-pick-the-top-10-phyla">Among the Bacteria we pick the top 10 phyla</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Filter for bacterial sequences and extract taxonomic information</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>is_bacteria <span class="ot">&lt;-</span> <span class="fu">grepl</span>(<span class="st">"Bacteria;"</span>, <span class="fu">names</span>(silva_seqs))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>bacteria_seqs <span class="ot">&lt;-</span> silva_seqs[is_bacteria]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract phylum information</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>get_phylum <span class="ot">&lt;-</span> <span class="cf">function</span>(full_taxonomy) {</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  split_tax <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(full_taxonomy, <span class="st">";"</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">ifelse</span>(<span class="fu">length</span>(split_tax) <span class="sc">&gt;=</span> <span class="dv">3</span>, split_tax[<span class="dv">3</span>], <span class="cn">NA</span>))  <span class="co"># Return NA if phylum level is missing</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>phyla <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">names</span>(bacteria_seqs), get_phylum)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Stratify sampling across phyla</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>phylum_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(phyla, <span class="at">useNA =</span> <span class="st">"ifany"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>top_phyla <span class="ot">&lt;-</span> <span class="fu">names</span>(<span class="fu">sort</span>(phylum_counts, <span class="at">decreasing =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>top_phyla <span class="ot">&lt;-</span> top_phyla[<span class="sc">!</span><span class="fu">is.na</span>(top_phyla)][<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]  <span class="co"># Top 10 phyla, excluding NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We choose to sample 21 species from the 10 most frequent phyla to create a diverse reference set of about 210 (we’ll discard a few when doing the alignment).</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate number of sequences to sample from each phylum</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>n_per_phylum <span class="ot">&lt;-</span> <span class="dv">21</span>  <span class="co"># Increased from 20 to 21 to get 210 sequences (allowing for some potential loss in alignment)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="we-create-the-random-sample-from-the-10-main-phyla." class="level3">
+<h3 class="anchored" data-anchor-id="we-create-the-random-sample-from-the-10-main-phyla.">We create the random sample from the 10 main phyla.</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Random sampling</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2042</span>)  <span class="co"># for reproducibility</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>sampled_seqs <span class="ot">&lt;-</span> <span class="fu">lapply</span>(top_phyla, <span class="cf">function</span>(phylum) {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  phylum_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(phyla <span class="sc">==</span> phylum)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(phylum_indices) <span class="sc">&gt;</span> n_per_phylum) {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    sampled_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(phylum_indices, n_per_phylum)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    sampled_indices <span class="ot">&lt;-</span> phylum_indices</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  bacteria_seqs[sampled_indices]</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine sampled sequences</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>final_sample <span class="ot">&lt;-</span> <span class="fu">do.call</span>(c, sampled_seqs)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure we have at least 205 sequences, randomly sampling more if needed</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(final_sample) <span class="sc">&lt;</span> <span class="dv">205</span>) {</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  remaining_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span><span class="fu">names</span>(bacteria_seqs) <span class="sc">%in%</span> <span class="fu">names</span>(final_sample))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  additional_sample <span class="ot">&lt;-</span> <span class="fu">sample</span>(bacteria_seqs[remaining_indices], <span class="dv">205</span> <span class="sc">-</span> </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">length</span>(final_sample))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  final_sample <span class="ot">&lt;-</span> <span class="fu">c</span>(final_sample, additional_sample)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Trim to exactly 205 if we have more</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>final_sample <span class="ot">&lt;-</span> final_sample[<span class="dv">1</span><span class="sc">:</span><span class="dv">205</span>]</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Summary of width of sequences chosen:"</span>,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(Biostrings<span class="sc">::</span><span class="fu">width</span>(final_sample)),<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Summary of width of sequences chosen: 1200 1364 1431 1419.634 1482 1870 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="step-2-alignment-with-penalties" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-alignment-with-penalties">Step 2: Alignment with penalties</h2>
+<p>So the sequences have varying lengths from about 1200 to <code>r</code>max(Biostrings::width(final_sample))` and we want to find subsequences of length about 450 that can be “aligned” so have a certain number of conserved positions that can be used as anchors and we need variability in the other positions which serve to characterize the different species.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Align the sequences</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Aligning sequences...</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Aligning sequences...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>aligned_seqs <span class="ot">&lt;-</span> <span class="fu">AlignSeqs</span>(final_sample, <span class="at">anchor=</span><span class="cn">NA</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to DNAStringSet for easier manipulation</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>aligned_seqs_dna <span class="ot">&lt;-</span> <span class="fu">DNAStringSet</span>(aligned_seqs)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to find the most informative region</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>find_informative_region <span class="ot">&lt;-</span> <span class="cf">function</span>(aligned_seqs, <span class="at">target_length =</span> <span class="dv">450</span>, <span class="at">window_size =</span> <span class="dv">50</span>) {</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create a simple consensus</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  cons_matrix <span class="ot">&lt;-</span> <span class="fu">consensusMatrix</span>(aligned_seqs)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  consensus <span class="ot">&lt;-</span> <span class="fu">apply</span>(cons_matrix[<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"G"</span>, <span class="st">"T"</span>), ], <span class="dv">2</span>, <span class="cf">function</span>(x) {</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">sum</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="st">"-"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(<span class="fu">which.max</span>(x))</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  consensus <span class="ot">&lt;-</span> <span class="fu">paste</span>(consensus, <span class="at">collapse =</span> <span class="st">""</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Slide a window across the consensus sequence</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>(<span class="fu">nchar</span>(consensus) <span class="sc">-</span> window_size <span class="sc">+</span> <span class="dv">1</span>), <span class="cf">function</span>(i) {</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    window <span class="ot">&lt;-</span> <span class="fu">substr</span>(consensus, i, i <span class="sc">+</span> window_size <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(window <span class="sc">!=</span> <span class="st">"-"</span>) <span class="sc">/</span> window_size  <span class="co"># Score based on non-gap content</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Find the highest scoring region that's close to the target length</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  start <span class="ot">&lt;-</span> <span class="fu">which.max</span>(scores)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  end <span class="ot">&lt;-</span> <span class="fu">min</span>(start <span class="sc">+</span> target_length <span class="sc">-</span> <span class="dv">1</span>, <span class="fu">nchar</span>(consensus))</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(start, end))</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the most informative region</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Finding informative region...</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Finding informative region...</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>region <span class="ot">&lt;-</span> <span class="fu">find_informative_region</span>(aligned_seqs_dna)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the region from all sequences</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>final_aligned_seqs <span class="ot">&lt;-</span> <span class="fu">subseq</span>(aligned_seqs_dna, <span class="at">start =</span> region[<span class="dv">1</span>], <span class="at">end =</span> region[<span class="dv">2</span>])</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame to store original names and new unique identifiers</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>sequence_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">original_name =</span> <span class="fu">names</span>(final_aligned_seqs),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">unique_id =</span> <span class="fu">paste0</span>(<span class="st">"Seq_"</span>, <span class="fu">seq_along</span>(final_aligned_seqs)),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign unique identifiers as names, but keep original names as attributes</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(final_aligned_seqs) <span class="ot">&lt;-</span> sequence_info<span class="sc">$</span>unique_id</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(final_aligned_seqs)) {</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(final_aligned_seqs[[i]], <span class="st">"original_name"</span>) <span class="ot">&lt;-</span> sequence_info<span class="sc">$</span>original_name[i]</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Write the aligned sequences to a file</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">writeXStringSet</span>(final_aligned_seqs, <span class="st">"../data/test_silva_aligned_bacteria_sequences.fasta"</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Write sequence information to a separate file</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(sequence_info, <span class="st">"../data/test_silva_sequence_info.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Print summary of the final aligned sequences</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Final alignment summary:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Final alignment summary:</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(Biostrings<span class="sc">::</span><span class="fu">width</span>(final_aligned_seqs)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    450     450     450     450     450     450 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Number of sequences in final alignment:"</span>, <span class="fu">length</span>(final_aligned_seqs), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Number of sequences in final alignment: 205 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print some additional information about the alignment</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Alignment characteristics:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Alignment characteristics:</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>cons_matrix <span class="ot">&lt;-</span> <span class="fu">consensusMatrix</span>(final_aligned_seqs)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Conserved positions:"</span>, <span class="fu">sum</span>(<span class="fu">apply</span>(cons_matrix[<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"G"</span>, <span class="st">"T"</span>), ], <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">max</span>(x) <span class="sc">==</span> <span class="fu">sum</span>(x))), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Conserved positions: 79 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Variable positions:"</span>, <span class="fu">sum</span>(<span class="fu">apply</span>(cons_matrix[<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"C"</span>, <span class="st">"G"</span>, <span class="st">"T"</span>), ], <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(x <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">&gt;</span> <span class="dv">1</span>)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variable positions: 371 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print information about the gap content in the final sequences</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>gap_props_final <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">as.matrix</span>(final_aligned_seqs) <span class="sc">==</span> <span class="st">"-"</span>) <span class="sc">/</span> Biostrings<span class="sc">::</span><span class="fu">width</span>(final_aligned_seqs)[<span class="dv">1</span>]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Gap proportion in final sequences:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Gap proportion in final sequences:</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(gap_props_final))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.2467  0.3000  0.3422  0.3524  0.3800  0.7756 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Max gap proportion:"</span>, <span class="fu">max</span>(gap_props_final), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Max gap proportion: 0.7755556 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print a few examples of original names and their corresponding unique IDs</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Example of sequence names:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Example of sequence names:</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(sequence_info))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                                                          original_name
+1                            Bacteria;Pseudomonadota;Gammaproteobacteria;Pseudomonadales;Moraxellaceae;
+2 Bacteria;Pseudomonadota;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;Escherichia-Shigella;
+3             Bacteria;Pseudomonadota;Gammaproteobacteria;Pseudomonadales;Pseudomonadaceae;Pseudomonas;
+4       Bacteria;Pseudomonadota;Gammaproteobacteria;Burkholderiales;Oxalobacteraceae;Janthinobacterium;
+5                 Bacteria;Pseudomonadota;Gammaproteobacteria;Pseudomonadales;Halomonadaceae;Halomonas;
+6                              Bacteria;Pseudomonadota;Gammaproteobacteria;Pseudomonadales;SAR86 clade;
+  unique_id
+1     Seq_1
+2     Seq_2
+3     Seq_3
+4     Seq_4
+5     Seq_5
+6     Seq_6</code></pre>
+</div>
+</div>
+</section>
+<section id="step-3-compute-the-within-and-between-distances-and-compare-the-histograms" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-compute-the-within-and-between-distances-and-compare-the-histograms">Step 3: Compute the within and between distances and compare the histograms</h2>
+<p>Now we have the 200 sequences, we can do the simulations by making random splits 40-160 here we use the Kimura distance between DNA sequences.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Biostrings)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the aligned sequences</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>aligned_seqs <span class="ot">&lt;-</span> <span class="fu">readDNAStringSet</span>(<span class="st">"../data/silva_aligned_bacteria_sequences.fasta"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Take the first 200 sequences</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>aligned_seqs_200 <span class="ot">&lt;-</span> aligned_seqs[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>]</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to DNAbin object (required for dist.dna)</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>dna_bin <span class="ot">&lt;-</span> <span class="fu">as.DNAbin</span>(aligned_seqs_200)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Kimura 2-parameter distances</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>dist_matrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist.dna</span>(dna_bin, <span class="at">model =</span> <span class="st">"K80"</span>, <span class="at">pairwise.deletion =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to get nearest neighbor distances</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>get_nn_distances <span class="ot">&lt;-</span> <span class="cf">function</span>(dist_matrix, indices) {</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>  nn_distances <span class="ot">&lt;-</span> <span class="fu">apply</span>(dist_matrix[indices, indices, <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="dv">1</span>, <span class="cf">function</span>(row) <span class="fu">min</span>(row[row <span class="sc">&gt;</span> <span class="dv">0</span>]))</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(nn_distances)</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to get nearest neighbor distances between two sets</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>get_nn_distances_between <span class="ot">&lt;-</span> <span class="cf">function</span>(dist_matrix, from_indices, to_indices) {</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>  nn_distances <span class="ot">&lt;-</span> <span class="fu">apply</span>(dist_matrix[from_indices, to_indices, <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="dv">1</span>, min)</span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(nn_distances)</span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform multiple samplings and collect results</span></span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>n_simulations <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>sample_size <span class="ot">&lt;-</span> <span class="dv">40</span></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>within_sample_distances <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>between_sample_distances <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">194501</span>)  <span class="co"># for reproducibility</span></span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_simulations) {</span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Random sampling</span></span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>  sample_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, sample_size)</span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>  non_sample_indices <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, sample_indices)</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Within-sample nearest neighbor distances</span></span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a>  within_sample_distances[[i]] <span class="ot">&lt;-</span> <span class="fu">get_nn_distances</span>(dist_matrix, sample_indices)</span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Between sample and population nearest neighbor distances</span></span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a>  between_sample_distances[[i]] <span class="ot">&lt;-</span> <span class="fu">get_nn_distances_between</span>(dist_matrix, non_sample_indices, sample_indices)</span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine results</span></span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true" tabindex="-1"></a>within_sample_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">Distance =</span> <span class="fu">unlist</span>(within_sample_distances),</span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">Type =</span> <span class="st">"Within Sample"</span></span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true" tabindex="-1"></a>between_sample_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">Distance =</span> <span class="fu">unlist</span>(between_sample_distances),</span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">Type =</span> <span class="st">"Between Sample and Population"</span></span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="show-the-histograms-of-both-nn-distances" class="level3">
+<h3 class="anchored" data-anchor-id="show-the-histograms-of-both-nn-distances">Show the histograms of both nn distances</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>all_distances_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(within_sample_df, between_sample_df)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create histograms</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>all_plot<span class="ot">&lt;-</span> <span class="fu">ggplot</span>(all_distances_df, <span class="fu">aes</span>(<span class="at">x =</span> Distance, <span class="at">fill =</span> Type)) <span class="sc">+</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">position =</span> <span class="st">"identity"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>Type, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="co"># title = "Distribution of Nearest Neighbor Distances",</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Kimura 2-parameter Distance"</span>,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Within Sample"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"Between Sample and Population"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>          <span class="co">#axis.title = element_blank(),</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(all_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03-bacterialdata_files/figure-html/visualizeboth-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ggsave("silva_nearest_neighbor_distances_histogram.png", all_distances_df , width = 6, height = 4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create histogram without legend or title</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>create_histogram <span class="ot">&lt;-</span> <span class="cf">function</span>(data, fill_color) {</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">Distance =</span> data), <span class="fu">aes</span>(<span class="at">x =</span> Distance)) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> fill_color, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="co"># title = "Distribution of Nearest Neighbor Distances",</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Kimura 2-parameter Distance"</span>,</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>          <span class="co">#axis.title = element_blank(),</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Create histograms</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>hist_within <span class="ot">&lt;-</span> <span class="fu">create_histogram</span>(<span class="fu">unlist</span>(within_sample_distances), <span class="st">"blue"</span>)</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>hist_between <span class="ot">&lt;-</span> <span class="fu">create_histogram</span>(<span class="fu">unlist</span>(between_sample_distances), <span class="st">"red"</span>)</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine histograms</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>combined_hist1 <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(hist_within, hist_between, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03-bacterialdata_files/figure-html/separatehist-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_hist1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>TableGrob (2 x 1) "arrange": 2 grobs
+  z     cells    name           grob
+1 1 (1-1,1-1) arrange gtable[layout]
+2 2 (2-2,1-1) arrange gtable[layout]</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save combined histogram</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"silva_combined_distances_histogram.png"</span>, combined_hist1, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create histogram with density estimate</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>create_histogram_with_density <span class="ot">&lt;-</span> <span class="cf">function</span>(data, fill_color, line_color) {</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">Distance =</span> data), <span class="fu">aes</span>(<span class="at">x =</span> Distance)) <span class="sc">+</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> fill_color, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">color =</span> line_color, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>,<span class="at">adjust=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">plot.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create histograms with density estimates</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>hist_within <span class="ot">&lt;-</span> <span class="fu">create_histogram_with_density</span>(<span class="fu">unlist</span>(within_sample_distances), <span class="st">"blue"</span>, <span class="st">"darkblue"</span>)</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>hist_between <span class="ot">&lt;-</span> <span class="fu">create_histogram_with_density</span>(<span class="fu">unlist</span>(between_sample_distances), <span class="st">"red"</span>, <span class="st">"darkred"</span>)</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine histograms</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>combined_hist2 <span class="ot">&lt;-</span> <span class="fu">grid.arrange</span>(hist_within, hist_between, <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03-bacterialdata_files/figure-html/densityhisto-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(combined_hist2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>TableGrob (2 x 1) "arrange": 2 grobs
+  z     cells    name           grob
+1 1 (1-1,1-1) arrange gtable[layout]
+2 2 (2-2,1-1) arrange gtable[layout]</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save combined histogram</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave("silva_combined_dist_hist_density.png", combined_hist2, width = 10, height = 5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="step-4-using-distribution-percentiles-to-find-the-threshold-of-coincidence" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-using-distribution-percentiles-to-find-the-threshold-of-coincidence">Step 4: Using distribution percentiles to find the threshold of “coincidence”</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming within_sample_distances and between_sample_distances are lists of vectors</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate percentiles for a list of distance vectors</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>calculate_percentiles <span class="ot">&lt;-</span> <span class="cf">function</span>(distance_list, percentiles) {</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  all_distances <span class="ot">&lt;-</span> <span class="fu">unlist</span>(distance_list)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(percentiles, <span class="cf">function</span>(p) <span class="fu">quantile</span>(all_distances, p<span class="sc">/</span><span class="dv">100</span>))</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate 1st and 5th percentiles for both distributions</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>percentiles <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>within_percentiles <span class="ot">&lt;-</span> <span class="fu">calculate_percentiles</span>(within_sample_distances, percentiles)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>between_percentiles <span class="ot">&lt;-</span> <span class="fu">calculate_percentiles</span>(between_sample_distances, percentiles)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for easy comparison</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>percentile_comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Percentile =</span> <span class="fu">c</span>(<span class="st">"1st"</span>, <span class="st">"5th"</span>),</span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Within_Sample =</span> within_percentiles,</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sample_to_Population =</span> between_percentiles</span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the comparison</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Comparison of 1st and 5th percentiles:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Comparison of 1st and 5th percentiles:</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(percentile_comparison, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> Percentile Within_Sample Sample_to_Population
+        1st    0.01548814           0.01460938
+        5th    0.05423807           0.05096344</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate and print the differences</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Differences (Within Sample - Sample to Population):</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Differences (Within Sample - Sample to Population):</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>diff_1st <span class="ot">&lt;-</span> within_percentiles[<span class="dv">1</span>] <span class="sc">-</span> between_percentiles[<span class="dv">1</span>]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>diff_5th <span class="ot">&lt;-</span> within_percentiles[<span class="dv">2</span>] <span class="sc">-</span> between_percentiles[<span class="dv">2</span>]</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1st percentile difference:"</span>, diff_1st, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>1st percentile difference: 0.0008787655 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"5th percentile difference:"</span>, diff_5th, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>5th percentile difference: 0.003274623 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot distribution of AD statistics</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>ad_plot<span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">AD_statistic =</span> ad_stats[, <span class="st">"AD_statistic"</span>]), <span class="fu">aes</span>(<span class="at">x =</span> AD_statistic)) <span class="sc">+</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">fill =</span> <span class="st">"purple"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color=</span><span class="st">"purple"</span>)<span class="sc">+</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">stat =</span> ad_stats_null),</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> stat),</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="co">#title = "Distribution of Anderson-Darling Test Statistics",</span></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"AD Statistic"</span>,</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>,</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ad_plot)</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a><span class="co">#ggsave("silva_anderson_darling_histogram.png", ad_plot, width = 5, height = 5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ape)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Biostrings)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the aligned sequences</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>aligned_seqs <span class="ot">&lt;-</span> <span class="fu">readDNAStringSet</span>(<span class="st">"../data/silva_aligned_bacteria_sequences.fasta"</span>)</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Take the first 200 sequences</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>aligned_seqs_200 <span class="ot">&lt;-</span> aligned_seqs[<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>]</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the sequence information</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>sequence_info <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/silva_sequence_info.csv"</span>, <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a named vector for easy lookup</span></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>name_mapping <span class="ot">&lt;-</span> <span class="fu">setNames</span>(sequence_info<span class="sc">$</span>original_name, sequence_info<span class="sc">$</span>unique_id)</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to DNAbin object (required for dist.dna)</span></span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>dna_bin <span class="ot">&lt;-</span> <span class="fu">as.DNAbin</span>(aligned_seqs_200)</span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Kimura 2-parameter distances</span></span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a>dist_matrix <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist.dna</span>(dna_bin, <span class="at">model =</span> <span class="st">"K80"</span>, <span class="at">pairwise.deletion =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to get unique pairs of sequences with distances smaller than the threshold</span></span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>get_close_pairs <span class="ot">&lt;-</span> <span class="cf">function</span>(dist_matrix, threshold) {</span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>  close_pairs <span class="ot">&lt;-</span> <span class="fu">which</span>(dist_matrix <span class="sc">&lt;</span> threshold <span class="sc">&amp;</span> dist_matrix <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="fu">lower.tri</span>(dist_matrix), <span class="at">arr.ind =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(close_pairs) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">Seq1 =</span> <span class="fu">rownames</span>(dist_matrix)[close_pairs[,<span class="dv">1</span>]],</span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">Seq2 =</span> <span class="fu">colnames</span>(dist_matrix)[close_pairs[,<span class="dv">2</span>]],</span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">Distance =</span> dist_matrix[close_pairs]</span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb56-34"><a href="#cb56-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-35"><a href="#cb56-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-36"><a href="#cb56-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the threshold to 0.015488</span></span>
+<span id="cb56-37"><a href="#cb56-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-38"><a href="#cb56-38" aria-hidden="true" tabindex="-1"></a>threshold <span class="ot">&lt;-</span> <span class="fl">0.015488</span></span>
+<span id="cb56-39"><a href="#cb56-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-40"><a href="#cb56-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Get close pairs</span></span>
+<span id="cb56-41"><a href="#cb56-41" aria-hidden="true" tabindex="-1"></a>close_pairs_df <span class="ot">&lt;-</span> <span class="fu">get_close_pairs</span>(dist_matrix, threshold)</span>
+<span id="cb56-42"><a href="#cb56-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-43"><a href="#cb56-43" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(close_pairs_df)) {</span>
+<span id="cb56-44"><a href="#cb56-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"No pairs found with distance smaller than"</span>, threshold, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-45"><a href="#cb56-45" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb56-46"><a href="#cb56-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Pairs of sequences with distances smaller than"</span>, threshold, <span class="st">":</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb56-47"><a href="#cb56-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb56-48"><a href="#cb56-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print the close pairs with original taxonomic names</span></span>
+<span id="cb56-49"><a href="#cb56-49" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(close_pairs_df)) {</span>
+<span id="cb56-50"><a href="#cb56-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Pair"</span>, i, <span class="st">":</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-51"><a href="#cb56-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Sequence 1:"</span>, name_mapping[close_pairs_df<span class="sc">$</span>Seq1[i]], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-52"><a href="#cb56-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Sequence 2:"</span>, name_mapping[close_pairs_df<span class="sc">$</span>Seq2[i]], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-53"><a href="#cb56-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"Distance:"</span>, close_pairs_df<span class="sc">$</span>Distance[i], <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb56-54"><a href="#cb56-54" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb56-55"><a href="#cb56-55" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb56-56"><a href="#cb56-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Number of unique close pairs found:"</span>, <span class="fu">nrow</span>(close_pairs_df), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb56-57"><a href="#cb56-57" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pairs of sequences with distances smaller than 0.015488 :
+
+Pair 1 :
+Sequence 1: Bacteria;Bacillota;Bacilli;Staphylococcales;Staphylococcaceae;Staphylococcus; 
+Sequence 2: Bacteria;Bacillota;Bacilli;Staphylococcales;Staphylococcaceae;Staphylococcus; 
+Distance: 0.003067494 
+
+Pair 2 :
+Sequence 1: Bacteria;Actinomycetota;Actinobacteria;Kitasatosporales;Streptomycetaceae;Streptomyces; 
+Sequence 2: Bacteria;Actinomycetota;Actinobacteria;Kitasatosporales;Streptomycetaceae;Streptomyces; 
+Distance: 0.01017183 
+
+Pair 3 :
+Sequence 1: Bacteria;Actinomycetota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Cutibacterium; 
+Sequence 2: Bacteria;Actinomycetota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Cutibacterium; 
+Distance: 0.01460938 
+
+Pair 4 :
+Sequence 1: Bacteria;Actinomycetota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Cutibacterium; 
+Sequence 2: Bacteria;Actinomycetota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Cutibacterium; 
+Distance: 0.01356862 
+
+Pair 5 :
+Sequence 1: Bacteria;Cyanobacteriota;Cyanobacteriia;Cyanobacteriales;Coleofasciculaceae;Coleofasciculus PCC-7420; 
+Sequence 2: Bacteria;Cyanobacteriota;Cyanobacteriia;Cyanobacteriales;Coleofasciculaceae;Coleofasciculus PCC-7420; 
+Distance: 0.01137475 
+
+Number of unique close pairs found: 5 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of all distances</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>all_distances <span class="ot">&lt;-</span> dist_matrix[<span class="fu">lower.tri</span>(dist_matrix)]</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">Distance =</span> all_distances), <span class="fu">aes</span>(<span class="at">x =</span> Distance)) <span class="sc">+</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>, <span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="co">#title = "Distribution of All Pairwise Distances (SILVA)",</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Kimura 2-parameter Distance"</span>,</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Frequency"</span>) <span class="sc">+</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> threshold, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>)</span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the histogram</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave("silva_all_distances_histogram.png", width = 10, height = 6)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to create and save the plot</span></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>create_ad_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(p_values, n1, n2, filename) {</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate 95th and 99th percentiles of the uniform distribution</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  percentile_95 <span class="ot">&lt;-</span> <span class="fl">0.95</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  percentile_99 <span class="ot">&lt;-</span> <span class="fl">0.99</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">p_value =</span> p_values), <span class="fu">aes</span>(<span class="at">x =</span> p_value)) <span class="sc">+</span></span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">30</span>, <span class="at">fill =</span> <span class="st">"skyblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="fu">aes</span>(<span class="at">y =</span> ..density..)) <span class="sc">+</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span>  <span class="co"># Uniform distribution line</span></span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fl">0.05</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> percentile_95, <span class="at">color =</span> <span class="st">"green"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> percentile_99, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, percentile_95, percentile_99, <span class="dv">1</span>),</span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"0.05"</span>, <span class="st">"95th"</span>, <span class="st">"99th"</span>, <span class="st">"1"</span>)) <span class="sc">+</span></span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Anderson-Darling p-value"</span>, </span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>         <span class="at">y =</span> <span class="st">"Density"</span>,</span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"A-D p-values (n1 ="</span>, n1, <span class="st">", n2 ="</span>, n2, <span class="st">")"</span>)) <span class="sc">+</span></span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(filename, p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb59-24"><a href="#cb59-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb59-25"><a href="#cb59-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print summary statistics</span></span>
+<span id="cb59-26"><a href="#cb59-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"For n1 ="</span>, n1, <span class="st">"and n2 ="</span>, n2, <span class="st">":</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb59-27"><a href="#cb59-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Proportion of p-values &lt; 0.05:"</span>, <span class="fu">mean</span>(p_values <span class="sc">&lt;</span> <span class="fl">0.05</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb59-28"><a href="#cb59-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Mean p-value:"</span>, <span class="fu">mean</span>(p_values), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb59-29"><a href="#cb59-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Median p-value:"</span>, <span class="fu">median</span>(p_values), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb59-30"><a href="#cb59-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb59-31"><a href="#cb59-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-32"><a href="#cb59-32" aria-hidden="true" tabindex="-1"></a><span class="co"># For n1 = 40, n2 = 160</span></span>
+<span id="cb59-33"><a href="#cb59-33" aria-hidden="true" tabindex="-1"></a><span class="fu">create_ad_plot</span>(ad_results_40_160, <span class="dv">40</span>, <span class="dv">160</span>, <span class="st">"anderson_darling_pvalues_40_160.png"</span>)</span>
+<span id="cb59-34"><a href="#cb59-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-35"><a href="#cb59-35" aria-hidden="true" tabindex="-1"></a><span class="co"># For n1 = 100, n2 = 400</span></span>
+<span id="cb59-36"><a href="#cb59-36" aria-hidden="true" tabindex="-1"></a><span class="co"># create_ad_plot(ad_results_100_400, 100, 400, "anderson_darling_pvalues_100_400.png")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb60" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Coincidence Detection using Distances: SILVA data"</span></span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Distance histogram comparisons and detection of small distance pairs"</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: false</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>This analysis creates the data we analyse from the SILVA database</span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>by taking a random set of 205 sequences to start with, aligning them</span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>and choosing the most informative contiguous subsequence of length 450.</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>We take 200 first ones that align correctly and then use those to run the 40/160</span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>cuts many times, we look at the 1st and 5th percentiles.</span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>Using the 1st percentil we create a threshold of detection of "very close"</span>
+<span id="cb60-18"><a href="#cb60-18" aria-hidden="true" tabindex="-1"></a>species and see that in fact these are all duplicates.</span>
+<span id="cb60-19"><a href="#cb60-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-20"><a href="#cb60-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-21"><a href="#cb60-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-22"><a href="#cb60-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 1: Prepare downloaded data from SILVA database</span></span>
+<span id="cb60-23"><a href="#cb60-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-24"><a href="#cb60-24" aria-hidden="true" tabindex="-1"></a>We start by loading the libraries we need, include the Bioconductor package</span>
+<span id="cb60-25"><a href="#cb60-25" aria-hidden="true" tabindex="-1"></a><span class="in">`DECIPHER`</span> that we use for alignment.</span>
+<span id="cb60-26"><a href="#cb60-26" aria-hidden="true" tabindex="-1"></a>To install the Bioconductor package <span class="in">`DECIPHER`</span></span>
+<span id="cb60-27"><a href="#cb60-27" aria-hidden="true" tabindex="-1"></a>that provides the best alignment function:</span>
+<span id="cb60-28"><a href="#cb60-28" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-29"><a href="#cb60-29" aria-hidden="true" tabindex="-1"></a><span class="in">BiocManager::install("DECIPHER")</span></span>
+<span id="cb60-30"><a href="#cb60-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-31"><a href="#cb60-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-32"><a href="#cb60-32" aria-hidden="true" tabindex="-1"></a>We make sure Biostrings is loaded last because of the width function.</span>
+<span id="cb60-33"><a href="#cb60-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-34"><a href="#cb60-34" aria-hidden="true" tabindex="-1"></a>The Silva database <span class="in">`silva_nr99_v138.2_toGenus_trainset.fa`</span> was downloaded from</span>
+<span id="cb60-35"><a href="#cb60-35" aria-hidden="true" tabindex="-1"></a>zenodo (DADA2) benchmark dataset.</span>
+<span id="cb60-36"><a href="#cb60-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-37"><a href="#cb60-37" aria-hidden="true" tabindex="-1"></a>Originally this file should contain only bacteria, but we will check.</span>
+<span id="cb60-38"><a href="#cb60-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-39"><a href="#cb60-39" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup}</span></span>
+<span id="cb60-40"><a href="#cb60-40" aria-hidden="true" tabindex="-1"></a><span class="in">#| cache: false</span></span>
+<span id="cb60-41"><a href="#cb60-41" aria-hidden="true" tabindex="-1"></a><span class="in">#| cache-refresh: true</span></span>
+<span id="cb60-42"><a href="#cb60-42" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb60-43"><a href="#cb60-43" aria-hidden="true" tabindex="-1"></a><span class="in">library(DECIPHER)</span></span>
+<span id="cb60-44"><a href="#cb60-44" aria-hidden="true" tabindex="-1"></a><span class="in">library(seqinr)</span></span>
+<span id="cb60-45"><a href="#cb60-45" aria-hidden="true" tabindex="-1"></a><span class="in">library(ape)</span></span>
+<span id="cb60-46"><a href="#cb60-46" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb60-47"><a href="#cb60-47" aria-hidden="true" tabindex="-1"></a><span class="in">library(Biostrings)</span></span>
+<span id="cb60-48"><a href="#cb60-48" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-49"><a href="#cb60-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-50"><a href="#cb60-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loadSILVAintial}</span></span>
+<span id="cb60-51"><a href="#cb60-51" aria-hidden="true" tabindex="-1"></a><span class="in"># Step 1: Load the SILVA database</span></span>
+<span id="cb60-52"><a href="#cb60-52" aria-hidden="true" tabindex="-1"></a><span class="in">silva_file &lt;- "../data/silva_nr99_v138.2_toGenus_trainset.fa"</span></span>
+<span id="cb60-53"><a href="#cb60-53" aria-hidden="true" tabindex="-1"></a><span class="in">silva_seqs &lt;- readDNAStringSet(silva_file)</span></span>
+<span id="cb60-54"><a href="#cb60-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-55"><a href="#cb60-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-56"><a href="#cb60-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Among the Bacteria we pick the top 10 phyla</span></span>
+<span id="cb60-57"><a href="#cb60-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-58"><a href="#cb60-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tryphyla, eval=TRUE}</span></span>
+<span id="cb60-59"><a href="#cb60-59" aria-hidden="true" tabindex="-1"></a><span class="in"># Step 2: Filter for bacterial sequences and extract taxonomic information</span></span>
+<span id="cb60-60"><a href="#cb60-60" aria-hidden="true" tabindex="-1"></a><span class="in">is_bacteria &lt;- grepl("Bacteria;", names(silva_seqs))</span></span>
+<span id="cb60-61"><a href="#cb60-61" aria-hidden="true" tabindex="-1"></a><span class="in">bacteria_seqs &lt;- silva_seqs[is_bacteria]</span></span>
+<span id="cb60-62"><a href="#cb60-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-63"><a href="#cb60-63" aria-hidden="true" tabindex="-1"></a><span class="in"># Extract phylum information</span></span>
+<span id="cb60-64"><a href="#cb60-64" aria-hidden="true" tabindex="-1"></a><span class="in">get_phylum &lt;- function(full_taxonomy) {</span></span>
+<span id="cb60-65"><a href="#cb60-65" aria-hidden="true" tabindex="-1"></a><span class="in">  split_tax &lt;- strsplit(full_taxonomy, ";")[[1]]</span></span>
+<span id="cb60-66"><a href="#cb60-66" aria-hidden="true" tabindex="-1"></a><span class="in">  return(ifelse(length(split_tax) &gt;= 3, split_tax[3], NA))  # Return NA if phylum level is missing</span></span>
+<span id="cb60-67"><a href="#cb60-67" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-68"><a href="#cb60-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-69"><a href="#cb60-69" aria-hidden="true" tabindex="-1"></a><span class="in">phyla &lt;- sapply(names(bacteria_seqs), get_phylum)</span></span>
+<span id="cb60-70"><a href="#cb60-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-71"><a href="#cb60-71" aria-hidden="true" tabindex="-1"></a><span class="in"># Step 3: Stratify sampling across phyla</span></span>
+<span id="cb60-72"><a href="#cb60-72" aria-hidden="true" tabindex="-1"></a><span class="in">phylum_counts &lt;- table(phyla, useNA = "ifany")</span></span>
+<span id="cb60-73"><a href="#cb60-73" aria-hidden="true" tabindex="-1"></a><span class="in">top_phyla &lt;- names(sort(phylum_counts, decreasing = TRUE))</span></span>
+<span id="cb60-74"><a href="#cb60-74" aria-hidden="true" tabindex="-1"></a><span class="in">top_phyla &lt;- top_phyla[!is.na(top_phyla)][1:10]  # Top 10 phyla, excluding NA</span></span>
+<span id="cb60-75"><a href="#cb60-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-76"><a href="#cb60-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-77"><a href="#cb60-77" aria-hidden="true" tabindex="-1"></a>We choose to sample 21 species from the 10 most frequent phyla</span>
+<span id="cb60-78"><a href="#cb60-78" aria-hidden="true" tabindex="-1"></a>to create a diverse reference set of about 210 (we'll discard a few </span>
+<span id="cb60-79"><a href="#cb60-79" aria-hidden="true" tabindex="-1"></a>when doing the alignment).</span>
+<span id="cb60-80"><a href="#cb60-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-83"><a href="#cb60-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb60-84"><a href="#cb60-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate number of sequences to sample from each phylum</span></span>
+<span id="cb60-85"><a href="#cb60-85" aria-hidden="true" tabindex="-1"></a>n_per_phylum <span class="ot">&lt;-</span> <span class="dv">21</span>  <span class="co"># Increased from 20 to 21 to get 210 sequences (allowing for some potential loss in alignment)</span></span>
+<span id="cb60-86"><a href="#cb60-86" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-87"><a href="#cb60-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-88"><a href="#cb60-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### We create the random sample from the 10 main phyla.</span></span>
+<span id="cb60-89"><a href="#cb60-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-92"><a href="#cb60-92" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb60-93"><a href="#cb60-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Random sampling</span></span>
+<span id="cb60-94"><a href="#cb60-94" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2042</span>)  <span class="co"># for reproducibility</span></span>
+<span id="cb60-95"><a href="#cb60-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-96"><a href="#cb60-96" aria-hidden="true" tabindex="-1"></a>sampled_seqs <span class="ot">&lt;-</span> <span class="fu">lapply</span>(top_phyla, <span class="cf">function</span>(phylum) {</span>
+<span id="cb60-97"><a href="#cb60-97" aria-hidden="true" tabindex="-1"></a>  phylum_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(phyla <span class="sc">==</span> phylum)</span>
+<span id="cb60-98"><a href="#cb60-98" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(phylum_indices) <span class="sc">&gt;</span> n_per_phylum) {</span>
+<span id="cb60-99"><a href="#cb60-99" aria-hidden="true" tabindex="-1"></a>    sampled_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(phylum_indices, n_per_phylum)</span>
+<span id="cb60-100"><a href="#cb60-100" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb60-101"><a href="#cb60-101" aria-hidden="true" tabindex="-1"></a>    sampled_indices <span class="ot">&lt;-</span> phylum_indices</span>
+<span id="cb60-102"><a href="#cb60-102" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb60-103"><a href="#cb60-103" aria-hidden="true" tabindex="-1"></a>  bacteria_seqs[sampled_indices]</span>
+<span id="cb60-104"><a href="#cb60-104" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb60-105"><a href="#cb60-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-106"><a href="#cb60-106" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine sampled sequences</span></span>
+<span id="cb60-107"><a href="#cb60-107" aria-hidden="true" tabindex="-1"></a>final_sample <span class="ot">&lt;-</span> <span class="fu">do.call</span>(c, sampled_seqs)</span>
+<span id="cb60-108"><a href="#cb60-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-109"><a href="#cb60-109" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure we have at least 205 sequences, randomly sampling more if needed</span></span>
+<span id="cb60-110"><a href="#cb60-110" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(final_sample) <span class="sc">&lt;</span> <span class="dv">205</span>) {</span>
+<span id="cb60-111"><a href="#cb60-111" aria-hidden="true" tabindex="-1"></a>  remaining_indices <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span><span class="fu">names</span>(bacteria_seqs) <span class="sc">%in%</span> <span class="fu">names</span>(final_sample))</span>
+<span id="cb60-112"><a href="#cb60-112" aria-hidden="true" tabindex="-1"></a>  additional_sample <span class="ot">&lt;-</span> <span class="fu">sample</span>(bacteria_seqs[remaining_indices], <span class="dv">205</span> <span class="sc">-</span> </span>
+<span id="cb60-113"><a href="#cb60-113" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">length</span>(final_sample))</span>
+<span id="cb60-114"><a href="#cb60-114" aria-hidden="true" tabindex="-1"></a>  final_sample <span class="ot">&lt;-</span> <span class="fu">c</span>(final_sample, additional_sample)</span>
+<span id="cb60-115"><a href="#cb60-115" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb60-116"><a href="#cb60-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-117"><a href="#cb60-117" aria-hidden="true" tabindex="-1"></a><span class="co"># Trim to exactly 205 if we have more</span></span>
+<span id="cb60-118"><a href="#cb60-118" aria-hidden="true" tabindex="-1"></a>final_sample <span class="ot">&lt;-</span> final_sample[<span class="dv">1</span><span class="sc">:</span><span class="dv">205</span>]</span>
+<span id="cb60-119"><a href="#cb60-119" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Summary of width of sequences chosen:"</span>,</span>
+<span id="cb60-120"><a href="#cb60-120" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(Biostrings<span class="sc">::</span><span class="fu">width</span>(final_sample)),<span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb60-121"><a href="#cb60-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-122"><a href="#cb60-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-123"><a href="#cb60-123" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 2: Alignment with penalties</span></span>
+<span id="cb60-124"><a href="#cb60-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-125"><a href="#cb60-125" aria-hidden="true" tabindex="-1"></a>So the sequences have varying lengths from about <span class="in">`r min(width(final_sample))`</span> to </span>
+<span id="cb60-126"><a href="#cb60-126" aria-hidden="true" tabindex="-1"></a><span class="in">`r `</span>max(Biostrings::width(final_sample))`</span>
+<span id="cb60-127"><a href="#cb60-127" aria-hidden="true" tabindex="-1"></a>and we want to find subsequences of length about 450 that</span>
+<span id="cb60-128"><a href="#cb60-128" aria-hidden="true" tabindex="-1"></a>can be "aligned" so have a certain number of conserved</span>
+<span id="cb60-129"><a href="#cb60-129" aria-hidden="true" tabindex="-1"></a>positions that can be used as anchors and we need variability</span>
+<span id="cb60-130"><a href="#cb60-130" aria-hidden="true" tabindex="-1"></a>in the other positions which serve to characterize the different</span>
+<span id="cb60-131"><a href="#cb60-131" aria-hidden="true" tabindex="-1"></a>species.</span>
+<span id="cb60-132"><a href="#cb60-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-133"><a href="#cb60-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-134"><a href="#cb60-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r alignment,eval=TRUE}</span></span>
+<span id="cb60-135"><a href="#cb60-135" aria-hidden="true" tabindex="-1"></a><span class="in"># Align the sequences</span></span>
+<span id="cb60-136"><a href="#cb60-136" aria-hidden="true" tabindex="-1"></a><span class="in">cat("Aligning sequences...\n")</span></span>
+<span id="cb60-137"><a href="#cb60-137" aria-hidden="true" tabindex="-1"></a><span class="in">aligned_seqs &lt;- AlignSeqs(final_sample, anchor=NA, verbose = FALSE)</span></span>
+<span id="cb60-138"><a href="#cb60-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-139"><a href="#cb60-139" aria-hidden="true" tabindex="-1"></a><span class="in"># Convert to DNAStringSet for easier manipulation</span></span>
+<span id="cb60-140"><a href="#cb60-140" aria-hidden="true" tabindex="-1"></a><span class="in">aligned_seqs_dna &lt;- DNAStringSet(aligned_seqs)</span></span>
+<span id="cb60-141"><a href="#cb60-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-142"><a href="#cb60-142" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to find the most informative region</span></span>
+<span id="cb60-143"><a href="#cb60-143" aria-hidden="true" tabindex="-1"></a><span class="in">find_informative_region &lt;- function(aligned_seqs, target_length = 450, window_size = 50) {</span></span>
+<span id="cb60-144"><a href="#cb60-144" aria-hidden="true" tabindex="-1"></a><span class="in">  # Create a simple consensus</span></span>
+<span id="cb60-145"><a href="#cb60-145" aria-hidden="true" tabindex="-1"></a><span class="in">  cons_matrix &lt;- consensusMatrix(aligned_seqs)</span></span>
+<span id="cb60-146"><a href="#cb60-146" aria-hidden="true" tabindex="-1"></a><span class="in">  consensus &lt;- apply(cons_matrix[c("A", "C", "G", "T"), ], 2, function(x) {</span></span>
+<span id="cb60-147"><a href="#cb60-147" aria-hidden="true" tabindex="-1"></a><span class="in">    if (sum(x) == 0) return("-")</span></span>
+<span id="cb60-148"><a href="#cb60-148" aria-hidden="true" tabindex="-1"></a><span class="in">    names(which.max(x))</span></span>
+<span id="cb60-149"><a href="#cb60-149" aria-hidden="true" tabindex="-1"></a><span class="in">  })</span></span>
+<span id="cb60-150"><a href="#cb60-150" aria-hidden="true" tabindex="-1"></a><span class="in">  consensus &lt;- paste(consensus, collapse = "")</span></span>
+<span id="cb60-151"><a href="#cb60-151" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-152"><a href="#cb60-152" aria-hidden="true" tabindex="-1"></a><span class="in">  # Slide a window across the consensus sequence</span></span>
+<span id="cb60-153"><a href="#cb60-153" aria-hidden="true" tabindex="-1"></a><span class="in">  scores &lt;- sapply(1:(nchar(consensus) - window_size + 1), function(i) {</span></span>
+<span id="cb60-154"><a href="#cb60-154" aria-hidden="true" tabindex="-1"></a><span class="in">    window &lt;- substr(consensus, i, i + window_size - 1)</span></span>
+<span id="cb60-155"><a href="#cb60-155" aria-hidden="true" tabindex="-1"></a><span class="in">    sum(window != "-") / window_size  # Score based on non-gap content</span></span>
+<span id="cb60-156"><a href="#cb60-156" aria-hidden="true" tabindex="-1"></a><span class="in">  })</span></span>
+<span id="cb60-157"><a href="#cb60-157" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-158"><a href="#cb60-158" aria-hidden="true" tabindex="-1"></a><span class="in">  # Find the highest scoring region that's close to the target length</span></span>
+<span id="cb60-159"><a href="#cb60-159" aria-hidden="true" tabindex="-1"></a><span class="in">  start &lt;- which.max(scores)</span></span>
+<span id="cb60-160"><a href="#cb60-160" aria-hidden="true" tabindex="-1"></a><span class="in">  end &lt;- min(start + target_length - 1, nchar(consensus))</span></span>
+<span id="cb60-161"><a href="#cb60-161" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-162"><a href="#cb60-162" aria-hidden="true" tabindex="-1"></a><span class="in">  return(c(start, end))</span></span>
+<span id="cb60-163"><a href="#cb60-163" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-164"><a href="#cb60-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-165"><a href="#cb60-165" aria-hidden="true" tabindex="-1"></a><span class="in"># Find the most informative region</span></span>
+<span id="cb60-166"><a href="#cb60-166" aria-hidden="true" tabindex="-1"></a><span class="in">cat("Finding informative region...\n")</span></span>
+<span id="cb60-167"><a href="#cb60-167" aria-hidden="true" tabindex="-1"></a><span class="in">region &lt;- find_informative_region(aligned_seqs_dna)</span></span>
+<span id="cb60-168"><a href="#cb60-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-169"><a href="#cb60-169" aria-hidden="true" tabindex="-1"></a><span class="in"># Extract the region from all sequences</span></span>
+<span id="cb60-170"><a href="#cb60-170" aria-hidden="true" tabindex="-1"></a><span class="in">final_aligned_seqs &lt;- subseq(aligned_seqs_dna, start = region[1], end = region[2])</span></span>
+<span id="cb60-171"><a href="#cb60-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-172"><a href="#cb60-172" aria-hidden="true" tabindex="-1"></a><span class="in"># Create a data frame to store original names and new unique identifiers</span></span>
+<span id="cb60-173"><a href="#cb60-173" aria-hidden="true" tabindex="-1"></a><span class="in">sequence_info &lt;- data.frame(</span></span>
+<span id="cb60-174"><a href="#cb60-174" aria-hidden="true" tabindex="-1"></a><span class="in">  original_name = names(final_aligned_seqs),</span></span>
+<span id="cb60-175"><a href="#cb60-175" aria-hidden="true" tabindex="-1"></a><span class="in">  unique_id = paste0("Seq_", seq_along(final_aligned_seqs)),</span></span>
+<span id="cb60-176"><a href="#cb60-176" aria-hidden="true" tabindex="-1"></a><span class="in">  stringsAsFactors = FALSE</span></span>
+<span id="cb60-177"><a href="#cb60-177" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb60-178"><a href="#cb60-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-179"><a href="#cb60-179" aria-hidden="true" tabindex="-1"></a><span class="in"># Assign unique identifiers as names, but keep original names as attributes</span></span>
+<span id="cb60-180"><a href="#cb60-180" aria-hidden="true" tabindex="-1"></a><span class="in">names(final_aligned_seqs) &lt;- sequence_info$unique_id</span></span>
+<span id="cb60-181"><a href="#cb60-181" aria-hidden="true" tabindex="-1"></a><span class="in">for (i in seq_along(final_aligned_seqs)) {</span></span>
+<span id="cb60-182"><a href="#cb60-182" aria-hidden="true" tabindex="-1"></a><span class="in">  attr(final_aligned_seqs[[i]], "original_name") &lt;- sequence_info$original_name[i]</span></span>
+<span id="cb60-183"><a href="#cb60-183" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-184"><a href="#cb60-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-185"><a href="#cb60-185" aria-hidden="true" tabindex="-1"></a><span class="in"># Write the aligned sequences to a file</span></span>
+<span id="cb60-186"><a href="#cb60-186" aria-hidden="true" tabindex="-1"></a><span class="in">writeXStringSet(final_aligned_seqs, "../data/test_silva_aligned_bacteria_sequences.fasta")</span></span>
+<span id="cb60-187"><a href="#cb60-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-188"><a href="#cb60-188" aria-hidden="true" tabindex="-1"></a><span class="in"># Write sequence information to a separate file</span></span>
+<span id="cb60-189"><a href="#cb60-189" aria-hidden="true" tabindex="-1"></a><span class="in">write.csv(sequence_info, "../data/test_silva_sequence_info.csv", row.names = FALSE)</span></span>
+<span id="cb60-190"><a href="#cb60-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-191"><a href="#cb60-191" aria-hidden="true" tabindex="-1"></a><span class="in"># Print summary of the final aligned sequences</span></span>
+<span id="cb60-192"><a href="#cb60-192" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nFinal alignment summary:\n")</span></span>
+<span id="cb60-193"><a href="#cb60-193" aria-hidden="true" tabindex="-1"></a><span class="in">print(summary(Biostrings::width(final_aligned_seqs)))</span></span>
+<span id="cb60-194"><a href="#cb60-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-195"><a href="#cb60-195" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nNumber of sequences in final alignment:", length(final_aligned_seqs), "\n")</span></span>
+<span id="cb60-196"><a href="#cb60-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-197"><a href="#cb60-197" aria-hidden="true" tabindex="-1"></a><span class="in"># Print some additional information about the alignment</span></span>
+<span id="cb60-198"><a href="#cb60-198" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nAlignment characteristics:\n")</span></span>
+<span id="cb60-199"><a href="#cb60-199" aria-hidden="true" tabindex="-1"></a><span class="in">cons_matrix &lt;- consensusMatrix(final_aligned_seqs)</span></span>
+<span id="cb60-200"><a href="#cb60-200" aria-hidden="true" tabindex="-1"></a><span class="in">cat("Conserved positions:", sum(apply(cons_matrix[c("A", "C", "G", "T"), ], 2, function(x) max(x) == sum(x))), "\n")</span></span>
+<span id="cb60-201"><a href="#cb60-201" aria-hidden="true" tabindex="-1"></a><span class="in">cat("Variable positions:", sum(apply(cons_matrix[c("A", "C", "G", "T"), ], 2, function(x) sum(x &gt; 0) &gt; 1)), "\n")</span></span>
+<span id="cb60-202"><a href="#cb60-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-203"><a href="#cb60-203" aria-hidden="true" tabindex="-1"></a><span class="in"># Print information about the gap content in the final sequences</span></span>
+<span id="cb60-204"><a href="#cb60-204" aria-hidden="true" tabindex="-1"></a><span class="in">gap_props_final &lt;- rowSums(as.matrix(final_aligned_seqs) == "-") / Biostrings::width(final_aligned_seqs)[1]</span></span>
+<span id="cb60-205"><a href="#cb60-205" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nGap proportion in final sequences:\n")</span></span>
+<span id="cb60-206"><a href="#cb60-206" aria-hidden="true" tabindex="-1"></a><span class="in">print(summary(gap_props_final))</span></span>
+<span id="cb60-207"><a href="#cb60-207" aria-hidden="true" tabindex="-1"></a><span class="in">cat("Max gap proportion:", max(gap_props_final), "\n")</span></span>
+<span id="cb60-208"><a href="#cb60-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-209"><a href="#cb60-209" aria-hidden="true" tabindex="-1"></a><span class="in"># Print a few examples of original names and their corresponding unique IDs</span></span>
+<span id="cb60-210"><a href="#cb60-210" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nExample of sequence names:\n")</span></span>
+<span id="cb60-211"><a href="#cb60-211" aria-hidden="true" tabindex="-1"></a><span class="in">print(head(sequence_info))</span></span>
+<span id="cb60-212"><a href="#cb60-212" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-213"><a href="#cb60-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-214"><a href="#cb60-214" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 3: Compute the within and between distances and compare the histograms</span></span>
+<span id="cb60-215"><a href="#cb60-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-216"><a href="#cb60-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-217"><a href="#cb60-217" aria-hidden="true" tabindex="-1"></a>Now we have the 200 sequences, we can do the simulations </span>
+<span id="cb60-218"><a href="#cb60-218" aria-hidden="true" tabindex="-1"></a>by making random splits 40-160</span>
+<span id="cb60-219"><a href="#cb60-219" aria-hidden="true" tabindex="-1"></a> here we use the Kimura distance between DNA sequences.</span>
+<span id="cb60-220"><a href="#cb60-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-221"><a href="#cb60-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-222"><a href="#cb60-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{r Fig9bisrealdata}</span></span>
+<span id="cb60-223"><a href="#cb60-223" aria-hidden="true" tabindex="-1"></a><span class="in">library(ape)</span></span>
+<span id="cb60-224"><a href="#cb60-224" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb60-225"><a href="#cb60-225" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb60-226"><a href="#cb60-226" aria-hidden="true" tabindex="-1"></a><span class="in">library(Biostrings)</span></span>
+<span id="cb60-227"><a href="#cb60-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-228"><a href="#cb60-228" aria-hidden="true" tabindex="-1"></a><span class="in"># Read the aligned sequences</span></span>
+<span id="cb60-229"><a href="#cb60-229" aria-hidden="true" tabindex="-1"></a><span class="in">aligned_seqs &lt;- readDNAStringSet("../data/silva_aligned_bacteria_sequences.fasta")</span></span>
+<span id="cb60-230"><a href="#cb60-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-231"><a href="#cb60-231" aria-hidden="true" tabindex="-1"></a><span class="in"># Take the first 200 sequences</span></span>
+<span id="cb60-232"><a href="#cb60-232" aria-hidden="true" tabindex="-1"></a><span class="in">aligned_seqs_200 &lt;- aligned_seqs[1:200]</span></span>
+<span id="cb60-233"><a href="#cb60-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-234"><a href="#cb60-234" aria-hidden="true" tabindex="-1"></a><span class="in"># Convert to DNAbin object (required for dist.dna)</span></span>
+<span id="cb60-235"><a href="#cb60-235" aria-hidden="true" tabindex="-1"></a><span class="in">dna_bin &lt;- as.DNAbin(aligned_seqs_200)</span></span>
+<span id="cb60-236"><a href="#cb60-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-237"><a href="#cb60-237" aria-hidden="true" tabindex="-1"></a><span class="in"># Compute Kimura 2-parameter distances</span></span>
+<span id="cb60-238"><a href="#cb60-238" aria-hidden="true" tabindex="-1"></a><span class="in">dist_matrix &lt;- as.matrix(dist.dna(dna_bin, model = "K80", pairwise.deletion = TRUE))</span></span>
+<span id="cb60-239"><a href="#cb60-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-240"><a href="#cb60-240" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to get nearest neighbor distances</span></span>
+<span id="cb60-241"><a href="#cb60-241" aria-hidden="true" tabindex="-1"></a><span class="in">get_nn_distances &lt;- function(dist_matrix, indices) {</span></span>
+<span id="cb60-242"><a href="#cb60-242" aria-hidden="true" tabindex="-1"></a><span class="in">  nn_distances &lt;- apply(dist_matrix[indices, indices, drop = FALSE], 1, function(row) min(row[row &gt; 0]))</span></span>
+<span id="cb60-243"><a href="#cb60-243" aria-hidden="true" tabindex="-1"></a><span class="in">  return(nn_distances)</span></span>
+<span id="cb60-244"><a href="#cb60-244" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-245"><a href="#cb60-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-246"><a href="#cb60-246" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to get nearest neighbor distances between two sets</span></span>
+<span id="cb60-247"><a href="#cb60-247" aria-hidden="true" tabindex="-1"></a><span class="in">get_nn_distances_between &lt;- function(dist_matrix, from_indices, to_indices) {</span></span>
+<span id="cb60-248"><a href="#cb60-248" aria-hidden="true" tabindex="-1"></a><span class="in">  nn_distances &lt;- apply(dist_matrix[from_indices, to_indices, drop = FALSE], 1, min)</span></span>
+<span id="cb60-249"><a href="#cb60-249" aria-hidden="true" tabindex="-1"></a><span class="in">  return(nn_distances)</span></span>
+<span id="cb60-250"><a href="#cb60-250" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-251"><a href="#cb60-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-252"><a href="#cb60-252" aria-hidden="true" tabindex="-1"></a><span class="in"># Perform multiple samplings and collect results</span></span>
+<span id="cb60-253"><a href="#cb60-253" aria-hidden="true" tabindex="-1"></a><span class="in">n_simulations &lt;- 1000</span></span>
+<span id="cb60-254"><a href="#cb60-254" aria-hidden="true" tabindex="-1"></a><span class="in">sample_size &lt;- 40</span></span>
+<span id="cb60-255"><a href="#cb60-255" aria-hidden="true" tabindex="-1"></a><span class="in">within_sample_distances &lt;- list()</span></span>
+<span id="cb60-256"><a href="#cb60-256" aria-hidden="true" tabindex="-1"></a><span class="in">between_sample_distances &lt;- list()</span></span>
+<span id="cb60-257"><a href="#cb60-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-258"><a href="#cb60-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-259"><a href="#cb60-259" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(194501)  # for reproducibility</span></span>
+<span id="cb60-260"><a href="#cb60-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-261"><a href="#cb60-261" aria-hidden="true" tabindex="-1"></a><span class="in">for (i in 1:n_simulations) {</span></span>
+<span id="cb60-262"><a href="#cb60-262" aria-hidden="true" tabindex="-1"></a><span class="in">  # Random sampling</span></span>
+<span id="cb60-263"><a href="#cb60-263" aria-hidden="true" tabindex="-1"></a><span class="in">  sample_indices &lt;- sample(1:200, sample_size)</span></span>
+<span id="cb60-264"><a href="#cb60-264" aria-hidden="true" tabindex="-1"></a><span class="in">  non_sample_indices &lt;- setdiff(1:200, sample_indices)</span></span>
+<span id="cb60-265"><a href="#cb60-265" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-266"><a href="#cb60-266" aria-hidden="true" tabindex="-1"></a><span class="in">  # Within-sample nearest neighbor distances</span></span>
+<span id="cb60-267"><a href="#cb60-267" aria-hidden="true" tabindex="-1"></a><span class="in">  within_sample_distances[[i]] &lt;- get_nn_distances(dist_matrix, sample_indices)</span></span>
+<span id="cb60-268"><a href="#cb60-268" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-269"><a href="#cb60-269" aria-hidden="true" tabindex="-1"></a><span class="in">  # Between sample and population nearest neighbor distances</span></span>
+<span id="cb60-270"><a href="#cb60-270" aria-hidden="true" tabindex="-1"></a><span class="in">  between_sample_distances[[i]] &lt;- get_nn_distances_between(dist_matrix, non_sample_indices, sample_indices)</span></span>
+<span id="cb60-271"><a href="#cb60-271" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-272"><a href="#cb60-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-273"><a href="#cb60-273" aria-hidden="true" tabindex="-1"></a><span class="in"># Combine results</span></span>
+<span id="cb60-274"><a href="#cb60-274" aria-hidden="true" tabindex="-1"></a><span class="in">within_sample_df &lt;- data.frame(</span></span>
+<span id="cb60-275"><a href="#cb60-275" aria-hidden="true" tabindex="-1"></a><span class="in">  Distance = unlist(within_sample_distances),</span></span>
+<span id="cb60-276"><a href="#cb60-276" aria-hidden="true" tabindex="-1"></a><span class="in">  Type = "Within Sample"</span></span>
+<span id="cb60-277"><a href="#cb60-277" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb60-278"><a href="#cb60-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-279"><a href="#cb60-279" aria-hidden="true" tabindex="-1"></a><span class="in">between_sample_df &lt;- data.frame(</span></span>
+<span id="cb60-280"><a href="#cb60-280" aria-hidden="true" tabindex="-1"></a><span class="in">  Distance = unlist(between_sample_distances),</span></span>
+<span id="cb60-281"><a href="#cb60-281" aria-hidden="true" tabindex="-1"></a><span class="in">  Type = "Between Sample and Population"</span></span>
+<span id="cb60-282"><a href="#cb60-282" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb60-283"><a href="#cb60-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-284"><a href="#cb60-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-285"><a href="#cb60-285" aria-hidden="true" tabindex="-1"></a><span class="fu">### Show the histograms of both nn distances</span></span>
+<span id="cb60-286"><a href="#cb60-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-287"><a href="#cb60-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{r visualizeboth}</span></span>
+<span id="cb60-288"><a href="#cb60-288" aria-hidden="true" tabindex="-1"></a><span class="in">all_distances_df &lt;- rbind(within_sample_df, between_sample_df)</span></span>
+<span id="cb60-289"><a href="#cb60-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-290"><a href="#cb60-290" aria-hidden="true" tabindex="-1"></a><span class="in"># Create histograms</span></span>
+<span id="cb60-291"><a href="#cb60-291" aria-hidden="true" tabindex="-1"></a><span class="in">all_plot&lt;- ggplot(all_distances_df, aes(x = Distance, fill = Type)) +</span></span>
+<span id="cb60-292"><a href="#cb60-292" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(position = "identity", alpha = 0.7, bins = 30) +</span></span>
+<span id="cb60-293"><a href="#cb60-293" aria-hidden="true" tabindex="-1"></a><span class="in">  facet_wrap(~Type, scales = "free_y", ncol = 1) +</span></span>
+<span id="cb60-294"><a href="#cb60-294" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(# title = "Distribution of Nearest Neighbor Distances",</span></span>
+<span id="cb60-295"><a href="#cb60-295" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "Kimura 2-parameter Distance",</span></span>
+<span id="cb60-296"><a href="#cb60-296" aria-hidden="true" tabindex="-1"></a><span class="in">       y = "Frequency") +</span></span>
+<span id="cb60-297"><a href="#cb60-297" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_minimal() +</span></span>
+<span id="cb60-298"><a href="#cb60-298" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_fill_manual(values = c("Within Sample" = "blue", "Between Sample and Population" = "red")) +</span></span>
+<span id="cb60-299"><a href="#cb60-299" aria-hidden="true" tabindex="-1"></a><span class="in">   theme(legend.position = "none",</span></span>
+<span id="cb60-300"><a href="#cb60-300" aria-hidden="true" tabindex="-1"></a><span class="in">          #axis.title = element_blank(),</span></span>
+<span id="cb60-301"><a href="#cb60-301" aria-hidden="true" tabindex="-1"></a><span class="in">          plot.title = element_blank())</span></span>
+<span id="cb60-302"><a href="#cb60-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-303"><a href="#cb60-303" aria-hidden="true" tabindex="-1"></a><span class="in">print(all_plot)</span></span>
+<span id="cb60-304"><a href="#cb60-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-305"><a href="#cb60-305" aria-hidden="true" tabindex="-1"></a><span class="in">#ggsave("silva_nearest_neighbor_distances_histogram.png", all_distances_df , width = 6, height = 4)</span></span>
+<span id="cb60-306"><a href="#cb60-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-307"><a href="#cb60-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-308"><a href="#cb60-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-309"><a href="#cb60-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-310"><a href="#cb60-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-311"><a href="#cb60-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-312"><a href="#cb60-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r separatehist}</span></span>
+<span id="cb60-313"><a href="#cb60-313" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
+<span id="cb60-314"><a href="#cb60-314" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to create histogram without legend or title</span></span>
+<span id="cb60-315"><a href="#cb60-315" aria-hidden="true" tabindex="-1"></a><span class="in">create_histogram &lt;- function(data, fill_color) {</span></span>
+<span id="cb60-316"><a href="#cb60-316" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(data.frame(Distance = data), aes(x = Distance)) +</span></span>
+<span id="cb60-317"><a href="#cb60-317" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_histogram(bins = 30, fill = fill_color, alpha = 0.7) +</span></span>
+<span id="cb60-318"><a href="#cb60-318" aria-hidden="true" tabindex="-1"></a><span class="in">    labs(# title = "Distribution of Nearest Neighbor Distances",</span></span>
+<span id="cb60-319"><a href="#cb60-319" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "Kimura 2-parameter Distance",</span></span>
+<span id="cb60-320"><a href="#cb60-320" aria-hidden="true" tabindex="-1"></a><span class="in">       y = "Frequency") +</span></span>
+<span id="cb60-321"><a href="#cb60-321" aria-hidden="true" tabindex="-1"></a><span class="in">    theme_minimal() +</span></span>
+<span id="cb60-322"><a href="#cb60-322" aria-hidden="true" tabindex="-1"></a><span class="in">    theme(legend.position = "none",</span></span>
+<span id="cb60-323"><a href="#cb60-323" aria-hidden="true" tabindex="-1"></a><span class="in">          #axis.title = element_blank(),</span></span>
+<span id="cb60-324"><a href="#cb60-324" aria-hidden="true" tabindex="-1"></a><span class="in">          plot.title = element_blank())</span></span>
+<span id="cb60-325"><a href="#cb60-325" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-326"><a href="#cb60-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-327"><a href="#cb60-327" aria-hidden="true" tabindex="-1"></a><span class="in"># Create histograms</span></span>
+<span id="cb60-328"><a href="#cb60-328" aria-hidden="true" tabindex="-1"></a><span class="in">hist_within &lt;- create_histogram(unlist(within_sample_distances), "blue")</span></span>
+<span id="cb60-329"><a href="#cb60-329" aria-hidden="true" tabindex="-1"></a><span class="in">hist_between &lt;- create_histogram(unlist(between_sample_distances), "red")</span></span>
+<span id="cb60-330"><a href="#cb60-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-331"><a href="#cb60-331" aria-hidden="true" tabindex="-1"></a><span class="in"># Combine histograms</span></span>
+<span id="cb60-332"><a href="#cb60-332" aria-hidden="true" tabindex="-1"></a><span class="in">combined_hist1 &lt;- grid.arrange(hist_within, hist_between, nrow = 2)</span></span>
+<span id="cb60-333"><a href="#cb60-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-334"><a href="#cb60-334" aria-hidden="true" tabindex="-1"></a><span class="in">print(combined_hist1)</span></span>
+<span id="cb60-335"><a href="#cb60-335" aria-hidden="true" tabindex="-1"></a><span class="in"># Save combined histogram</span></span>
+<span id="cb60-336"><a href="#cb60-336" aria-hidden="true" tabindex="-1"></a><span class="in">ggsave("silva_combined_distances_histogram.png", combined_hist1, width = 5, height = 5)</span></span>
+<span id="cb60-337"><a href="#cb60-337" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-338"><a href="#cb60-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-339"><a href="#cb60-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-340"><a href="#cb60-340" aria-hidden="true" tabindex="-1"></a><span class="in">```{r densityhisto}</span></span>
+<span id="cb60-341"><a href="#cb60-341" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to create histogram with density estimate</span></span>
+<span id="cb60-342"><a href="#cb60-342" aria-hidden="true" tabindex="-1"></a><span class="in">create_histogram_with_density &lt;- function(data, fill_color, line_color) {</span></span>
+<span id="cb60-343"><a href="#cb60-343" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(data.frame(Distance = data), aes(x = Distance)) +</span></span>
+<span id="cb60-344"><a href="#cb60-344" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_histogram(aes(y = ..density..), bins = 30, fill = fill_color, alpha = 0.7) +</span></span>
+<span id="cb60-345"><a href="#cb60-345" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_density(color = line_color, size = 1, alpha = 0.8,adjust=2) +</span></span>
+<span id="cb60-346"><a href="#cb60-346" aria-hidden="true" tabindex="-1"></a><span class="in">    theme_minimal() +</span></span>
+<span id="cb60-347"><a href="#cb60-347" aria-hidden="true" tabindex="-1"></a><span class="in">    theme(legend.position = "none",</span></span>
+<span id="cb60-348"><a href="#cb60-348" aria-hidden="true" tabindex="-1"></a><span class="in">          axis.title = element_blank(),</span></span>
+<span id="cb60-349"><a href="#cb60-349" aria-hidden="true" tabindex="-1"></a><span class="in">          plot.title = element_blank())</span></span>
+<span id="cb60-350"><a href="#cb60-350" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-351"><a href="#cb60-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-352"><a href="#cb60-352" aria-hidden="true" tabindex="-1"></a><span class="in"># Create histograms with density estimates</span></span>
+<span id="cb60-353"><a href="#cb60-353" aria-hidden="true" tabindex="-1"></a><span class="in">hist_within &lt;- create_histogram_with_density(unlist(within_sample_distances), "blue", "darkblue")</span></span>
+<span id="cb60-354"><a href="#cb60-354" aria-hidden="true" tabindex="-1"></a><span class="in">hist_between &lt;- create_histogram_with_density(unlist(between_sample_distances), "red", "darkred")</span></span>
+<span id="cb60-355"><a href="#cb60-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-356"><a href="#cb60-356" aria-hidden="true" tabindex="-1"></a><span class="in"># Combine histograms</span></span>
+<span id="cb60-357"><a href="#cb60-357" aria-hidden="true" tabindex="-1"></a><span class="in">combined_hist2 &lt;- grid.arrange(hist_within, hist_between, nrow = 2)</span></span>
+<span id="cb60-358"><a href="#cb60-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-359"><a href="#cb60-359" aria-hidden="true" tabindex="-1"></a><span class="in">print(combined_hist2)</span></span>
+<span id="cb60-360"><a href="#cb60-360" aria-hidden="true" tabindex="-1"></a><span class="in"># Save combined histogram</span></span>
+<span id="cb60-361"><a href="#cb60-361" aria-hidden="true" tabindex="-1"></a><span class="in"># ggsave("silva_combined_dist_hist_density.png", combined_hist2, width = 10, height = 5)</span></span>
+<span id="cb60-362"><a href="#cb60-362" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-363"><a href="#cb60-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-364"><a href="#cb60-364" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 4: Using distribution percentiles to find the threshold of "coincidence"</span></span>
+<span id="cb60-365"><a href="#cb60-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-366"><a href="#cb60-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-367"><a href="#cb60-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-370"><a href="#cb60-370" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb60-371"><a href="#cb60-371" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming within_sample_distances and between_sample_distances are lists of vectors</span></span>
+<span id="cb60-372"><a href="#cb60-372" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate percentiles for a list of distance vectors</span></span>
+<span id="cb60-373"><a href="#cb60-373" aria-hidden="true" tabindex="-1"></a>calculate_percentiles <span class="ot">&lt;-</span> <span class="cf">function</span>(distance_list, percentiles) {</span>
+<span id="cb60-374"><a href="#cb60-374" aria-hidden="true" tabindex="-1"></a>  all_distances <span class="ot">&lt;-</span> <span class="fu">unlist</span>(distance_list)</span>
+<span id="cb60-375"><a href="#cb60-375" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(percentiles, <span class="cf">function</span>(p) <span class="fu">quantile</span>(all_distances, p<span class="sc">/</span><span class="dv">100</span>))</span>
+<span id="cb60-376"><a href="#cb60-376" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb60-377"><a href="#cb60-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-378"><a href="#cb60-378" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate 1st and 5th percentiles for both distributions</span></span>
+<span id="cb60-379"><a href="#cb60-379" aria-hidden="true" tabindex="-1"></a>percentiles <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5</span>)</span>
+<span id="cb60-380"><a href="#cb60-380" aria-hidden="true" tabindex="-1"></a>within_percentiles <span class="ot">&lt;-</span> <span class="fu">calculate_percentiles</span>(within_sample_distances, percentiles)</span>
+<span id="cb60-381"><a href="#cb60-381" aria-hidden="true" tabindex="-1"></a>between_percentiles <span class="ot">&lt;-</span> <span class="fu">calculate_percentiles</span>(between_sample_distances, percentiles)</span>
+<span id="cb60-382"><a href="#cb60-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-383"><a href="#cb60-383" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for easy comparison</span></span>
+<span id="cb60-384"><a href="#cb60-384" aria-hidden="true" tabindex="-1"></a>percentile_comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb60-385"><a href="#cb60-385" aria-hidden="true" tabindex="-1"></a>  <span class="at">Percentile =</span> <span class="fu">c</span>(<span class="st">"1st"</span>, <span class="st">"5th"</span>),</span>
+<span id="cb60-386"><a href="#cb60-386" aria-hidden="true" tabindex="-1"></a>  <span class="at">Within_Sample =</span> within_percentiles,</span>
+<span id="cb60-387"><a href="#cb60-387" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sample_to_Population =</span> between_percentiles</span>
+<span id="cb60-388"><a href="#cb60-388" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb60-389"><a href="#cb60-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-390"><a href="#cb60-390" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the comparison</span></span>
+<span id="cb60-391"><a href="#cb60-391" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Comparison of 1st and 5th percentiles:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb60-392"><a href="#cb60-392" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(percentile_comparison, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb60-393"><a href="#cb60-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-394"><a href="#cb60-394" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate and print the differences</span></span>
+<span id="cb60-395"><a href="#cb60-395" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Differences (Within Sample - Sample to Population):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb60-396"><a href="#cb60-396" aria-hidden="true" tabindex="-1"></a>diff_1st <span class="ot">&lt;-</span> within_percentiles[<span class="dv">1</span>] <span class="sc">-</span> between_percentiles[<span class="dv">1</span>]</span>
+<span id="cb60-397"><a href="#cb60-397" aria-hidden="true" tabindex="-1"></a>diff_5th <span class="ot">&lt;-</span> within_percentiles[<span class="dv">2</span>] <span class="sc">-</span> between_percentiles[<span class="dv">2</span>]</span>
+<span id="cb60-398"><a href="#cb60-398" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1st percentile difference:"</span>, diff_1st, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb60-399"><a href="#cb60-399" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"5th percentile difference:"</span>, diff_5th, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb60-400"><a href="#cb60-400" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-401"><a href="#cb60-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-402"><a href="#cb60-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-403"><a href="#cb60-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-404"><a href="#cb60-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-405"><a href="#cb60-405" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ADplot2, eval=FALSE}</span></span>
+<span id="cb60-406"><a href="#cb60-406" aria-hidden="true" tabindex="-1"></a><span class="in"># Plot distribution of AD statistics</span></span>
+<span id="cb60-407"><a href="#cb60-407" aria-hidden="true" tabindex="-1"></a><span class="in">ad_plot&lt;- ggplot(data.frame(AD_statistic = ad_stats[, "AD_statistic"]), aes(x = AD_statistic)) +</span></span>
+<span id="cb60-408"><a href="#cb60-408" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(aes(y = ..density..), fill = "purple", alpha = 0.7, bins = 30) +</span></span>
+<span id="cb60-409"><a href="#cb60-409" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_density(color="purple")+</span></span>
+<span id="cb60-410"><a href="#cb60-410" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_density(data = data.frame(stat = ad_stats_null),</span></span>
+<span id="cb60-411"><a href="#cb60-411" aria-hidden="true" tabindex="-1"></a><span class="in">               aes(x = stat),</span></span>
+<span id="cb60-412"><a href="#cb60-412" aria-hidden="true" tabindex="-1"></a><span class="in">               color = "blue", size = 1) +</span></span>
+<span id="cb60-413"><a href="#cb60-413" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(#title = "Distribution of Anderson-Darling Test Statistics",</span></span>
+<span id="cb60-414"><a href="#cb60-414" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "AD Statistic",</span></span>
+<span id="cb60-415"><a href="#cb60-415" aria-hidden="true" tabindex="-1"></a><span class="in">       y = "Frequency") +</span></span>
+<span id="cb60-416"><a href="#cb60-416" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_minimal() +</span></span>
+<span id="cb60-417"><a href="#cb60-417" aria-hidden="true" tabindex="-1"></a><span class="in">  theme(legend.position="none",</span></span>
+<span id="cb60-418"><a href="#cb60-418" aria-hidden="true" tabindex="-1"></a><span class="in">        plot.title = element_blank())</span></span>
+<span id="cb60-419"><a href="#cb60-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-420"><a href="#cb60-420" aria-hidden="true" tabindex="-1"></a><span class="in">print(ad_plot)</span></span>
+<span id="cb60-421"><a href="#cb60-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-422"><a href="#cb60-422" aria-hidden="true" tabindex="-1"></a><span class="in">#ggsave("silva_anderson_darling_histogram.png", ad_plot, width = 5, height = 5)</span></span>
+<span id="cb60-423"><a href="#cb60-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-424"><a href="#cb60-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-425"><a href="#cb60-425" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-426"><a href="#cb60-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-427"><a href="#cb60-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-428"><a href="#cb60-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-429"><a href="#cb60-429" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-430"><a href="#cb60-430" aria-hidden="true" tabindex="-1"></a><span class="in">```{r closecalls}</span></span>
+<span id="cb60-431"><a href="#cb60-431" aria-hidden="true" tabindex="-1"></a><span class="in">library(ape)</span></span>
+<span id="cb60-432"><a href="#cb60-432" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb60-433"><a href="#cb60-433" aria-hidden="true" tabindex="-1"></a><span class="in">library(Biostrings)</span></span>
+<span id="cb60-434"><a href="#cb60-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-435"><a href="#cb60-435" aria-hidden="true" tabindex="-1"></a><span class="in"># Read the aligned sequences</span></span>
+<span id="cb60-436"><a href="#cb60-436" aria-hidden="true" tabindex="-1"></a><span class="in">aligned_seqs &lt;- readDNAStringSet("../data/silva_aligned_bacteria_sequences.fasta")</span></span>
+<span id="cb60-437"><a href="#cb60-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-438"><a href="#cb60-438" aria-hidden="true" tabindex="-1"></a><span class="in"># Take the first 200 sequences</span></span>
+<span id="cb60-439"><a href="#cb60-439" aria-hidden="true" tabindex="-1"></a><span class="in">aligned_seqs_200 &lt;- aligned_seqs[1:200]</span></span>
+<span id="cb60-440"><a href="#cb60-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-441"><a href="#cb60-441" aria-hidden="true" tabindex="-1"></a><span class="in"># Read the sequence information</span></span>
+<span id="cb60-442"><a href="#cb60-442" aria-hidden="true" tabindex="-1"></a><span class="in">sequence_info &lt;- read.csv("../data/silva_sequence_info.csv", stringsAsFactors = FALSE)</span></span>
+<span id="cb60-443"><a href="#cb60-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-444"><a href="#cb60-444" aria-hidden="true" tabindex="-1"></a><span class="in"># Create a named vector for easy lookup</span></span>
+<span id="cb60-445"><a href="#cb60-445" aria-hidden="true" tabindex="-1"></a><span class="in">name_mapping &lt;- setNames(sequence_info$original_name, sequence_info$unique_id)</span></span>
+<span id="cb60-446"><a href="#cb60-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-447"><a href="#cb60-447" aria-hidden="true" tabindex="-1"></a><span class="in"># Convert to DNAbin object (required for dist.dna)</span></span>
+<span id="cb60-448"><a href="#cb60-448" aria-hidden="true" tabindex="-1"></a><span class="in">dna_bin &lt;- as.DNAbin(aligned_seqs_200)</span></span>
+<span id="cb60-449"><a href="#cb60-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-450"><a href="#cb60-450" aria-hidden="true" tabindex="-1"></a><span class="in"># Compute Kimura 2-parameter distances</span></span>
+<span id="cb60-451"><a href="#cb60-451" aria-hidden="true" tabindex="-1"></a><span class="in">dist_matrix &lt;- as.matrix(dist.dna(dna_bin, model = "K80", pairwise.deletion = TRUE))</span></span>
+<span id="cb60-452"><a href="#cb60-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-453"><a href="#cb60-453" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to get unique pairs of sequences with distances smaller than the threshold</span></span>
+<span id="cb60-454"><a href="#cb60-454" aria-hidden="true" tabindex="-1"></a><span class="in">get_close_pairs &lt;- function(dist_matrix, threshold) {</span></span>
+<span id="cb60-455"><a href="#cb60-455" aria-hidden="true" tabindex="-1"></a><span class="in">  close_pairs &lt;- which(dist_matrix &lt; threshold &amp; dist_matrix &gt; 0 &amp; lower.tri(dist_matrix), arr.ind = TRUE)</span></span>
+<span id="cb60-456"><a href="#cb60-456" aria-hidden="true" tabindex="-1"></a><span class="in">  if (nrow(close_pairs) == 0) {</span></span>
+<span id="cb60-457"><a href="#cb60-457" aria-hidden="true" tabindex="-1"></a><span class="in">    return(NULL)</span></span>
+<span id="cb60-458"><a href="#cb60-458" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb60-459"><a href="#cb60-459" aria-hidden="true" tabindex="-1"></a><span class="in">  data.frame(</span></span>
+<span id="cb60-460"><a href="#cb60-460" aria-hidden="true" tabindex="-1"></a><span class="in">    Seq1 = rownames(dist_matrix)[close_pairs[,1]],</span></span>
+<span id="cb60-461"><a href="#cb60-461" aria-hidden="true" tabindex="-1"></a><span class="in">    Seq2 = colnames(dist_matrix)[close_pairs[,2]],</span></span>
+<span id="cb60-462"><a href="#cb60-462" aria-hidden="true" tabindex="-1"></a><span class="in">    Distance = dist_matrix[close_pairs]</span></span>
+<span id="cb60-463"><a href="#cb60-463" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb60-464"><a href="#cb60-464" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-465"><a href="#cb60-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-466"><a href="#cb60-466" aria-hidden="true" tabindex="-1"></a><span class="in"># Set the threshold to 0.015488</span></span>
+<span id="cb60-467"><a href="#cb60-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-468"><a href="#cb60-468" aria-hidden="true" tabindex="-1"></a><span class="in">threshold &lt;- 0.015488</span></span>
+<span id="cb60-469"><a href="#cb60-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-470"><a href="#cb60-470" aria-hidden="true" tabindex="-1"></a><span class="in"># Get close pairs</span></span>
+<span id="cb60-471"><a href="#cb60-471" aria-hidden="true" tabindex="-1"></a><span class="in">close_pairs_df &lt;- get_close_pairs(dist_matrix, threshold)</span></span>
+<span id="cb60-472"><a href="#cb60-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-473"><a href="#cb60-473" aria-hidden="true" tabindex="-1"></a><span class="in">if (is.null(close_pairs_df)) {</span></span>
+<span id="cb60-474"><a href="#cb60-474" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("No pairs found with distance smaller than", threshold, "\n")</span></span>
+<span id="cb60-475"><a href="#cb60-475" aria-hidden="true" tabindex="-1"></a><span class="in">} else {</span></span>
+<span id="cb60-476"><a href="#cb60-476" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("Pairs of sequences with distances smaller than", threshold, ":\n\n")</span></span>
+<span id="cb60-477"><a href="#cb60-477" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-478"><a href="#cb60-478" aria-hidden="true" tabindex="-1"></a><span class="in">  # Print the close pairs with original taxonomic names</span></span>
+<span id="cb60-479"><a href="#cb60-479" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:nrow(close_pairs_df)) {</span></span>
+<span id="cb60-480"><a href="#cb60-480" aria-hidden="true" tabindex="-1"></a><span class="in">    cat("Pair", i, ":\n")</span></span>
+<span id="cb60-481"><a href="#cb60-481" aria-hidden="true" tabindex="-1"></a><span class="in">    cat("Sequence 1:", name_mapping[close_pairs_df$Seq1[i]], "\n")</span></span>
+<span id="cb60-482"><a href="#cb60-482" aria-hidden="true" tabindex="-1"></a><span class="in">    cat("Sequence 2:", name_mapping[close_pairs_df$Seq2[i]], "\n")</span></span>
+<span id="cb60-483"><a href="#cb60-483" aria-hidden="true" tabindex="-1"></a><span class="in">    cat("Distance:", close_pairs_df$Distance[i], "\n\n")</span></span>
+<span id="cb60-484"><a href="#cb60-484" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb60-485"><a href="#cb60-485" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-486"><a href="#cb60-486" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("Number of unique close pairs found:", nrow(close_pairs_df), "\n")</span></span>
+<span id="cb60-487"><a href="#cb60-487" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-488"><a href="#cb60-488" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-489"><a href="#cb60-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-490"><a href="#cb60-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-491"><a href="#cb60-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-492"><a href="#cb60-492" aria-hidden="true" tabindex="-1"></a><span class="in">```{r completedist, eval=FALSE}</span></span>
+<span id="cb60-493"><a href="#cb60-493" aria-hidden="true" tabindex="-1"></a><span class="in"># Histogram of all distances</span></span>
+<span id="cb60-494"><a href="#cb60-494" aria-hidden="true" tabindex="-1"></a><span class="in">all_distances &lt;- dist_matrix[lower.tri(dist_matrix)]</span></span>
+<span id="cb60-495"><a href="#cb60-495" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(data.frame(Distance = all_distances), aes(x = Distance)) +</span></span>
+<span id="cb60-496"><a href="#cb60-496" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 50, fill = "blue", alpha = 0.7) +</span></span>
+<span id="cb60-497"><a href="#cb60-497" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(#title = "Distribution of All Pairwise Distances (SILVA)",</span></span>
+<span id="cb60-498"><a href="#cb60-498" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "Kimura 2-parameter Distance",</span></span>
+<span id="cb60-499"><a href="#cb60-499" aria-hidden="true" tabindex="-1"></a><span class="in">       y = "Frequency") +</span></span>
+<span id="cb60-500"><a href="#cb60-500" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_minimal() +</span></span>
+<span id="cb60-501"><a href="#cb60-501" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_vline(xintercept = threshold, color = "red", linetype = "dashed")</span></span>
+<span id="cb60-502"><a href="#cb60-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-503"><a href="#cb60-503" aria-hidden="true" tabindex="-1"></a><span class="in"># Save the histogram</span></span>
+<span id="cb60-504"><a href="#cb60-504" aria-hidden="true" tabindex="-1"></a><span class="in"># ggsave("silva_all_distances_histogram.png", width = 10, height = 6)</span></span>
+<span id="cb60-505"><a href="#cb60-505" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb60-506"><a href="#cb60-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-507"><a href="#cb60-507" aria-hidden="true" tabindex="-1"></a><span class="in">```{r newadplot,eval=FALSE}</span></span>
+<span id="cb60-508"><a href="#cb60-508" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb60-509"><a href="#cb60-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-510"><a href="#cb60-510" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to create and save the plot</span></span>
+<span id="cb60-511"><a href="#cb60-511" aria-hidden="true" tabindex="-1"></a><span class="in">create_ad_plot &lt;- function(p_values, n1, n2, filename) {</span></span>
+<span id="cb60-512"><a href="#cb60-512" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate 95th and 99th percentiles of the uniform distribution</span></span>
+<span id="cb60-513"><a href="#cb60-513" aria-hidden="true" tabindex="-1"></a><span class="in">  percentile_95 &lt;- 0.95</span></span>
+<span id="cb60-514"><a href="#cb60-514" aria-hidden="true" tabindex="-1"></a><span class="in">  percentile_99 &lt;- 0.99</span></span>
+<span id="cb60-515"><a href="#cb60-515" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-516"><a href="#cb60-516" aria-hidden="true" tabindex="-1"></a><span class="in">  p &lt;- ggplot(data.frame(p_value = p_values), aes(x = p_value)) +</span></span>
+<span id="cb60-517"><a href="#cb60-517" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_histogram(bins = 30, fill = "skyblue", color = "black", aes(y = ..density..)) +</span></span>
+<span id="cb60-518"><a href="#cb60-518" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_hline(yintercept = 1, color = "red", linetype = "dashed") +  # Uniform distribution line</span></span>
+<span id="cb60-519"><a href="#cb60-519" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_vline(xintercept = 0.05, color = "red", linetype = "dashed") +</span></span>
+<span id="cb60-520"><a href="#cb60-520" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_vline(xintercept = percentile_95, color = "green", linetype = "dashed") +</span></span>
+<span id="cb60-521"><a href="#cb60-521" aria-hidden="true" tabindex="-1"></a><span class="in">    geom_vline(xintercept = percentile_99, color = "blue", linetype = "dashed") +</span></span>
+<span id="cb60-522"><a href="#cb60-522" aria-hidden="true" tabindex="-1"></a><span class="in">    scale_x_continuous(breaks = c(0, 0.05, percentile_95, percentile_99, 1),</span></span>
+<span id="cb60-523"><a href="#cb60-523" aria-hidden="true" tabindex="-1"></a><span class="in">                       labels = c("0", "0.05", "95th", "99th", "1")) +</span></span>
+<span id="cb60-524"><a href="#cb60-524" aria-hidden="true" tabindex="-1"></a><span class="in">    labs(x = "Anderson-Darling p-value", </span></span>
+<span id="cb60-525"><a href="#cb60-525" aria-hidden="true" tabindex="-1"></a><span class="in">         y = "Density",</span></span>
+<span id="cb60-526"><a href="#cb60-526" aria-hidden="true" tabindex="-1"></a><span class="in">         title = paste("A-D p-values (n1 =", n1, ", n2 =", n2, ")")) +</span></span>
+<span id="cb60-527"><a href="#cb60-527" aria-hidden="true" tabindex="-1"></a><span class="in">    theme_minimal() +</span></span>
+<span id="cb60-528"><a href="#cb60-528" aria-hidden="true" tabindex="-1"></a><span class="in">    theme(axis.text.x = element_text(angle = 45, hjust = 1))</span></span>
+<span id="cb60-529"><a href="#cb60-529" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-530"><a href="#cb60-530" aria-hidden="true" tabindex="-1"></a><span class="in">  ggsave(filename, p, width = 8, height = 6)</span></span>
+<span id="cb60-531"><a href="#cb60-531" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb60-532"><a href="#cb60-532" aria-hidden="true" tabindex="-1"></a><span class="in">  # Print summary statistics</span></span>
+<span id="cb60-533"><a href="#cb60-533" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("For n1 =", n1, "and n2 =", n2, ":\n")</span></span>
+<span id="cb60-534"><a href="#cb60-534" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("Proportion of p-values &lt; 0.05:", mean(p_values &lt; 0.05), "\n")</span></span>
+<span id="cb60-535"><a href="#cb60-535" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("Mean p-value:", mean(p_values), "\n")</span></span>
+<span id="cb60-536"><a href="#cb60-536" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("Median p-value:", median(p_values), "\n\n")</span></span>
+<span id="cb60-537"><a href="#cb60-537" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb60-538"><a href="#cb60-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-539"><a href="#cb60-539" aria-hidden="true" tabindex="-1"></a><span class="in"># For n1 = 40, n2 = 160</span></span>
+<span id="cb60-540"><a href="#cb60-540" aria-hidden="true" tabindex="-1"></a><span class="in">create_ad_plot(ad_results_40_160, 40, 160, "anderson_darling_pvalues_40_160.png")</span></span>
+<span id="cb60-541"><a href="#cb60-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb60-542"><a href="#cb60-542" aria-hidden="true" tabindex="-1"></a><span class="in"># For n1 = 100, n2 = 400</span></span>
+<span id="cb60-543"><a href="#cb60-543" aria-hidden="true" tabindex="-1"></a><span class="in"># create_ad_plot(ad_results_100_400, 100, 400, "anderson_darling_pvalues_100_400.png")</span></span>
+<span id="cb60-544"><a href="#cb60-544" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

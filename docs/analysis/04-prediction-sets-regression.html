@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Prediction set coverage on a real example – Estimating Set Size by Cascading Exclusion</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Estimating Set Size by Cascading Exclusion</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../analysis/01-convex-hulls.html"> 
+<span class="menu-text">Convex Hulls</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../analysis/02-coincidence-detection.html"> 
+<span class="menu-text">Minimum Distance distributions</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../analysis/03-bacterialdata.html"> 
+<span class="menu-text">Bacterial Coincidence</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../analysis/04-prediction-sets-regression.html" aria-current="page"> 
+<span class="menu-text">Prediction Sets</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#using-the-cholostyramine-dataset-from-the-bootstrap-package" id="toc-using-the-cholostyramine-dataset-from-the-bootstrap-package" class="nav-link active" data-scroll-target="#using-the-cholostyramine-dataset-from-the-bootstrap-package">Using the cholostyramine dataset from the bootstrap package</a></li>
+  <li><a href="#functions-to-compute-the-prediction-interval" id="toc-functions-to-compute-the-prediction-interval" class="nav-link" data-scroll-target="#functions-to-compute-the-prediction-interval">Functions to compute the prediction interval</a></li>
+  <li><a href="#the-quadratic-version" id="toc-the-quadratic-version" class="nav-link" data-scroll-target="#the-quadratic-version">The quadratic version</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Prediction set coverage on a real example</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Compliance in cholostyramine data</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="using-the-cholostyramine-dataset-from-the-bootstrap-package" class="level2">
+<h2 class="anchored" data-anchor-id="using-the-cholostyramine-dataset-from-the-bootstrap-package">Using the cholostyramine dataset from the bootstrap package</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bootstrap)  <span class="co"># For the cholost dataset</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20050724</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the cholost dataset</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(cholost)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm dataset structure</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cholost)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   z     y
+1  0 -5.25
+2 27 -1.50
+3 71 59.50
+4 95 32.50
+5  0 -7.25
+6 28 23.50</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cholost)  <span class="co"># Should be 164×2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 164   2</code></pre>
+</div>
+</div>
+</section>
+<section id="functions-to-compute-the-prediction-interval" class="level2">
+<h2 class="anchored" data-anchor-id="functions-to-compute-the-prediction-interval">Functions to compute the prediction interval</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate OLS prediction interval</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>calculate_pred_interval <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Y, X_new, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate beta hat</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  beta_hat <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X) <span class="sc">%*%</span> Y</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate fitted values</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  Y_hat <span class="ot">&lt;-</span> X <span class="sc">%*%</span> beta_hat</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate sigma hat squared</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  sigma_hat_squared <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y <span class="sc">-</span> Y_hat)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> p)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  sigma_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(sigma_hat_squared)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make sure X_new is properly formatted as a row vector</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">is.vector</span>(X_new)) X_new <span class="ot">&lt;-</span> <span class="fu">matrix</span>(X_new, <span class="at">nrow=</span><span class="dv">1</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate prediction for new observation</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  Y_pred <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(X_new <span class="sc">%*%</span> beta_hat)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate prediction interval width</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  pred_var <span class="ot">&lt;-</span> sigma_hat_squared <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">as.numeric</span>(X_new <span class="sc">%*%</span> <span class="fu">solve</span>(<span class="fu">t</span>(X) <span class="sc">%*%</span> X) <span class="sc">%*%</span> <span class="fu">t</span>(X_new)))</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  pred_interval_width <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha<span class="sc">/</span><span class="dv">2</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(pred_var)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return prediction and interval bounds</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">prediction =</span> Y_pred,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> Y_pred <span class="sc">-</span> pred_interval_width,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> Y_pred <span class="sc">+</span> pred_interval_width</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function for leave-one-out estimate of coverage probability</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>loo_coverage_probability <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Y, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  covered <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    X_train <span class="ot">&lt;-</span> X[<span class="sc">-</span>i, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    Y_train <span class="ot">&lt;-</span> Y[<span class="sc">-</span>i]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    X_test <span class="ot">&lt;-</span> <span class="fu">matrix</span>(X[i, ], <span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    Y_test <span class="ot">&lt;-</span> Y[i]</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>({</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_pred_interval</span>(X_train, Y_train, X_test, alpha)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (Y_test <span class="sc">&gt;=</span> pred_interval<span class="sc">$</span>lower <span class="sc">&amp;&amp;</span> Y_test <span class="sc">&lt;=</span> pred_interval<span class="sc">$</span>upper) {</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        covered <span class="ot">&lt;-</span> covered <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Error in LOO iteration"</span>, i, <span class="st">":"</span>, e<span class="sc">$</span>message, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(covered <span class="sc">/</span> n)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the dataset - handling missing values if any</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cholost_clean <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(cholost)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define response and predictor</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">"y"</span>  <span class="co"># The response variable</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>predictor_var <span class="ot">&lt;-</span> <span class="st">"z"</span>  <span class="co"># The predictor variable</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeat the experiment multiple times to get a distribution of results</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>n_reps <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span>n_reps,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">true_coverage =</span> <span class="fu">numeric</span>(n_reps),</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">loo_coverage =</span> <span class="fu">numeric</span>(n_reps),</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">diff_squared =</span> <span class="fu">numeric</span>(n_reps)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rep <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_reps) {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Randomly split the data into training (50%) and test (50%) sets</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  n_total <span class="ot">&lt;-</span> <span class="fu">nrow</span>(cholost_clean)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n_total, <span class="at">size =</span> <span class="fu">floor</span>(n_total<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  train_data <span class="ot">&lt;-</span> cholost_clean[train_indices, ]</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  test_data <span class="ot">&lt;-</span> cholost_clean[<span class="sc">-</span>train_indices, ]</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare matrices for training</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  X_train <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(train_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  Y_train <span class="ot">&lt;-</span> train_data[[response_var]]</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare matrices for testing</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  X_test <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(test_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  Y_test <span class="ot">&lt;-</span> test_data[[response_var]]</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate true coverage on test set</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  covered <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  n_test <span class="ot">&lt;-</span> <span class="fu">nrow</span>(test_data)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_test) {</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>({</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>      pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_pred_interval</span>(X_train, Y_train, X_test[i, , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (Y_test[i] <span class="sc">&gt;=</span> pred_interval<span class="sc">$</span>lower <span class="sc">&amp;&amp;</span> Y_test[i] <span class="sc">&lt;=</span> pred_interval<span class="sc">$</span>upper) {</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>        covered <span class="ot">&lt;-</span> covered <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Error in test coverage calculation, iteration"</span>, i, <span class="st">":"</span>, e<span class="sc">$</span>message, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  true_cov <span class="ot">&lt;-</span> covered <span class="sc">/</span> n_test</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate LOO coverage estimate on training set</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>  loo_cov <span class="ot">&lt;-</span> <span class="fu">loo_coverage_probability</span>(X_train, Y_train, <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store results</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  results[rep, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(rep, true_cov, loo_cov, (true_cov <span class="sc">-</span> loo_cov)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average results</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>avg_results <span class="ot">&lt;-</span> <span class="fu">summarize</span>(results,</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_true_coverage =</span> <span class="fu">mean</span>(true_coverage),</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_loo_coverage =</span> <span class="fu">mean</span>(loo_coverage),</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sd_true_coverage =</span> <span class="fu">sd</span>(true_coverage),</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sd_loo_coverage =</span> <span class="fu">sd</span>(loo_coverage),</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_squared_diff =</span> <span class="fu">mean</span>(diff_squared))</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> loo_coverage, <span class="at">y =</span> true_coverage)) <span class="sc">+</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LOO Coverage Estimate vs. True Coverage"</span>,</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"Cholost Dataset ("</span>, n_reps, <span class="st">"random splits)"</span>),</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Leave-One-Out Coverage Estimate"</span>,</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"True Coverage on Test Set"</span>) <span class="sc">+</span></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of differences</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>results<span class="sc">$</span>difference <span class="ot">&lt;-</span> results<span class="sc">$</span>true_coverage <span class="sc">-</span> results<span class="sc">$</span>loo_coverage</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> difference)) <span class="sc">+</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="co">#title = "Distribution of Differences",</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>       <span class="co">#subtitle = #"True Coverage - LOO Coverage Estimate",</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Difference"</span>,</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"histogramdifferences.png"</span>,p2,<span class="at">width=</span><span class="dv">6</span>,<span class="at">height=</span><span class="dv">4</span>,<span class="at">bg=</span><span class="st">"white"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a scatter plot with the data and prediction intervals</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># (Using one random training set for visualization)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">44112</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cholost_clean), <span class="at">size =</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(cholost_clean)<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> cholost_clean[train_indices, ]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> cholost_clean[<span class="sc">-</span>train_indices, ]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>X_train <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(train_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>Y_train <span class="ot">&lt;-</span> train_data[[response_var]]</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a grid of values for z to show the prediction interval</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>z_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(cholost_clean<span class="sc">$</span>z), <span class="fu">max</span>(cholost_clean<span class="sc">$</span>z), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>X_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(z_grid, <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">z =</span> z_grid, <span class="at">y_pred =</span> <span class="cn">NA</span>, <span class="at">lower =</span> <span class="cn">NA</span>, <span class="at">upper =</span> <span class="cn">NA</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(z_grid)) {</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_pred_interval</span>(X_train, Y_train, X_grid[i, , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>y_pred[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>prediction</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>lower[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>lower</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>upper[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>upper</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> train_data, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y, <span class="at">color =</span> <span class="st">"Training Data"</span>)) <span class="sc">+</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> test_data, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y, <span class="at">color =</span> <span class="st">"Test Data"</span>)) <span class="sc">+</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y_pred), <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">fill =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Training Data"</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">"Test Data"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cholost Dataset with Prediction Intervals"</span>,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"True Coverage:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(results<span class="sc">$</span>true_coverage), <span class="dv">4</span>), </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"| LOO Estimate:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(results<span class="sc">$</span>loo_coverage), <span class="dv">4</span>)),</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Compliance"</span>, <span class="at">y =</span> <span class="st">"Improvement"</span>, <span class="at">color =</span> <span class="st">"Data Type"</span>) <span class="sc">+</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plots</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">#grid.arrange(p1, p2, p3, ncol = 2, layout_matrix = rbind(c(1,2), c(3,3)))</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/unnamed-chunk-1-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print summary statistics</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Summary Statistics ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Summary Statistics ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(avg_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  mean_true_coverage mean_loo_coverage sd_true_coverage sd_loo_coverage
+1          0.9335976         0.9334878       0.03016683       0.0139323
+  mean_squared_diff
+1       0.001547739</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean True Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_true_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Mean True Coverage: 0.9336</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean LOO Coverage Estimate:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_loo_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Mean LOO Coverage Estimate: 0.9335</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean Squared Difference:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_squared_diff, <span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Mean Squared Difference: 0.001548</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Standard Deviation of True Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>sd_true_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Standard Deviation of True Coverage: 0.0302</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Standard Deviation of LOO Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>sd_loo_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Standard Deviation of LOO Coverage: 0.0139</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Also fit a standard linear model once to examine the relationship</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>train_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> z, <span class="at">data =</span> train_data)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(train_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ z, data = train_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-56.387 -12.532   0.995  16.522  39.871 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.35902    4.84932   0.074    0.941    
+z            0.55122    0.07059   7.809 1.91e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 21.38 on 80 degrees of freedom
+Multiple R-squared:  0.4326,    Adjusted R-squared:  0.4255 
+F-statistic: 60.98 on 1 and 80 DF,  p-value: 1.91e-11</code></pre>
+</div>
+</div>
+</section>
+<section id="the-quadratic-version" class="level2">
+<h2 class="anchored" data-anchor-id="the-quadratic-version">The quadratic version</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bootstrap)  <span class="co"># For the cholost dataset</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the cholost dataset</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(cholost)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm dataset structure</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cholost)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   z     y
+1  0 -5.25
+2 27 -1.50
+3 71 59.50
+4 95 32.50
+5  0 -7.25
+6 28 23.50</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cholost)  <span class="co"># Should be 164×2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 164   2</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to calculate quadratic regression prediction interval</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>calculate_quad_pred_interval <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Y, X_new, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># For quadratic regression, we'll add a squared term to the design matrix</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  X_quad <span class="ot">&lt;-</span> <span class="fu">cbind</span>(X, X<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(X_quad) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"z"</span>, <span class="st">"z_squared"</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># For prediction, also square the new X</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  X_new_quad <span class="ot">&lt;-</span> <span class="fu">cbind</span>(X_new, X_new<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X_quad)</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ncol</span>(X_quad)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate beta hat</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>  beta_hat <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">t</span>(X_quad) <span class="sc">%*%</span> X_quad) <span class="sc">%*%</span> <span class="fu">t</span>(X_quad) <span class="sc">%*%</span> Y</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate fitted values</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  Y_hat <span class="ot">&lt;-</span> X_quad <span class="sc">%*%</span> beta_hat</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate sigma hat squared</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  sigma_hat_squared <span class="ot">&lt;-</span> <span class="fu">sum</span>((Y <span class="sc">-</span> Y_hat)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (n <span class="sc">-</span> p)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  sigma_hat <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(sigma_hat_squared)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate prediction for new observation</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>  Y_pred <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(X_new_quad <span class="sc">%*%</span> beta_hat)</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate prediction interval width</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>  pred_var <span class="ot">&lt;-</span> sigma_hat_squared <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">as.numeric</span>(X_new_quad <span class="sc">%*%</span> <span class="fu">solve</span>(<span class="fu">t</span>(X_quad) <span class="sc">%*%</span> X_quad) <span class="sc">%*%</span> <span class="fu">t</span>(X_new_quad)))</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>  pred_interval_width <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="dv">1</span> <span class="sc">-</span> alpha<span class="sc">/</span><span class="dv">2</span>) <span class="sc">*</span> <span class="fu">sqrt</span>(pred_var)</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return prediction and interval bounds</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">prediction =</span> Y_pred,</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower =</span> Y_pred <span class="sc">-</span> pred_interval_width,</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper =</span> Y_pred <span class="sc">+</span> pred_interval_width</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Function for leave-one-out estimate of coverage probability with quadratic regression</span></span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>loo_coverage_probability <span class="ot">&lt;-</span> <span class="cf">function</span>(X, Y, <span class="at">alpha =</span> <span class="fl">0.05</span>) {</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(X)</span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>  covered <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>    X_train <span class="ot">&lt;-</span> X[<span class="sc">-</span>i, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>    Y_train <span class="ot">&lt;-</span> Y[<span class="sc">-</span>i]</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>    X_test <span class="ot">&lt;-</span> <span class="fu">matrix</span>(X[i, ], <span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>    Y_test <span class="ot">&lt;-</span> Y[i]</span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>({</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>      pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_quad_pred_interval</span>(X_train, Y_train, X_test, alpha)</span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (Y_test <span class="sc">&gt;=</span> pred_interval<span class="sc">$</span>lower <span class="sc">&amp;&amp;</span> Y_test <span class="sc">&lt;=</span> pred_interval<span class="sc">$</span>upper) {</span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>        covered <span class="ot">&lt;-</span> covered <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Error in LOO iteration"</span>, i, <span class="st">":"</span>, e<span class="sc">$</span>message, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(covered <span class="sc">/</span> n)</span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the dataset - handling missing values if any</span></span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a>cholost_clean <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(cholost)</span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a><span class="co"># Define response and predictor</span></span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">"y"</span>  <span class="co"># The response variable</span></span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>predictor_var <span class="ot">&lt;-</span> <span class="st">"z"</span>  <span class="co"># The predictor variable</span></span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeat the experiment multiple times to get a distribution of results</span></span>
+<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a>n_reps <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span>n_reps,</span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">true_coverage =</span> <span class="fu">numeric</span>(n_reps),</span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">loo_coverage =</span> <span class="fu">numeric</span>(n_reps),</span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">diff_squared =</span> <span class="fu">numeric</span>(n_reps)</span>
+<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rep <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_reps) {</span>
+<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Randomly split the data into training (50%) and test (50%) sets</span></span>
+<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a>  n_total <span class="ot">&lt;-</span> <span class="fu">nrow</span>(cholost_clean)</span>
+<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a>  train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n_total, <span class="at">size =</span> <span class="fu">floor</span>(n_total<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>  train_data <span class="ot">&lt;-</span> cholost_clean[train_indices, ]</span>
+<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a>  test_data <span class="ot">&lt;-</span> cholost_clean[<span class="sc">-</span>train_indices, ]</span>
+<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare matrices for training</span></span>
+<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a>  X_train <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(train_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a>  Y_train <span class="ot">&lt;-</span> train_data[[response_var]]</span>
+<span id="cb31-89"><a href="#cb31-89" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-90"><a href="#cb31-90" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare matrices for testing</span></span>
+<span id="cb31-91"><a href="#cb31-91" aria-hidden="true" tabindex="-1"></a>  X_test <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(test_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb31-92"><a href="#cb31-92" aria-hidden="true" tabindex="-1"></a>  Y_test <span class="ot">&lt;-</span> test_data[[response_var]]</span>
+<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate true coverage on test set</span></span>
+<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a>  covered <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a>  n_test <span class="ot">&lt;-</span> <span class="fu">nrow</span>(test_data)</span>
+<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_test) {</span>
+<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>({</span>
+<span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a>      pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_quad_pred_interval</span>(X_train, Y_train, X_test[i, , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (Y_test[i] <span class="sc">&gt;=</span> pred_interval<span class="sc">$</span>lower <span class="sc">&amp;&amp;</span> Y_test[i] <span class="sc">&lt;=</span> pred_interval<span class="sc">$</span>upper) {</span>
+<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a>        covered <span class="ot">&lt;-</span> covered <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Error in test coverage calculation, iteration"</span>, i, <span class="st">":"</span>, e<span class="sc">$</span>message, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a>  true_cov <span class="ot">&lt;-</span> covered <span class="sc">/</span> n_test</span>
+<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate LOO coverage estimate on training set</span></span>
+<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a>  loo_cov <span class="ot">&lt;-</span> <span class="fu">loo_coverage_probability</span>(X_train, Y_train, <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb31-113"><a href="#cb31-113" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-114"><a href="#cb31-114" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store results</span></span>
+<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a>  results[rep, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(rep, true_cov, loo_cov, (true_cov <span class="sc">-</span> loo_cov)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average results</span></span>
+<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a>avg_results <span class="ot">&lt;-</span> <span class="fu">summarize</span>(results,</span>
+<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_true_coverage =</span> <span class="fu">mean</span>(true_coverage),</span>
+<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_loo_coverage =</span> <span class="fu">mean</span>(loo_coverage),</span>
+<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sd_true_coverage =</span> <span class="fu">sd</span>(true_coverage),</span>
+<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sd_loo_coverage =</span> <span class="fu">sd</span>(loo_coverage),</span>
+<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_squared_diff =</span> <span class="fu">mean</span>(diff_squared))</span>
+<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
+<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> loo_coverage, <span class="at">y =</span> true_coverage)) <span class="sc">+</span></span>
+<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LOO Coverage Estimate vs. True Coverage"</span>,</span>
+<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"Cholost Dataset - Quadratic Model ("</span>, n_reps, <span class="st">"random splits)"</span>),</span>
+<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Leave-One-Out Coverage Estimate"</span>,</span>
+<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"True Coverage on Test Set"</span>) <span class="sc">+</span></span>
+<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-136"><a href="#cb31-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of differences</span></span>
+<span id="cb31-137"><a href="#cb31-137" aria-hidden="true" tabindex="-1"></a>results<span class="sc">$</span>difference <span class="ot">&lt;-</span> results<span class="sc">$</span>true_coverage <span class="sc">-</span> results<span class="sc">$</span>loo_coverage</span>
+<span id="cb31-138"><a href="#cb31-138" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> difference)) <span class="sc">+</span></span>
+<span id="cb31-139"><a href="#cb31-139" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb31-140"><a href="#cb31-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb31-141"><a href="#cb31-141" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Differences"</span>,</span>
+<span id="cb31-142"><a href="#cb31-142" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"True Coverage - LOO Coverage Estimate"</span>,</span>
+<span id="cb31-143"><a href="#cb31-143" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Difference"</span>,</span>
+<span id="cb31-144"><a href="#cb31-144" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb31-145"><a href="#cb31-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb31-146"><a href="#cb31-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-147"><a href="#cb31-147" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a scatter plot with the data and prediction intervals</span></span>
+<span id="cb31-148"><a href="#cb31-148" aria-hidden="true" tabindex="-1"></a><span class="co"># (Using one random training set for visualization)</span></span>
+<span id="cb31-149"><a href="#cb31-149" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb31-150"><a href="#cb31-150" aria-hidden="true" tabindex="-1"></a>train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cholost_clean), <span class="at">size =</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(cholost_clean)<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb31-151"><a href="#cb31-151" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> cholost_clean[train_indices, ]</span>
+<span id="cb31-152"><a href="#cb31-152" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> cholost_clean[<span class="sc">-</span>train_indices, ]</span>
+<span id="cb31-153"><a href="#cb31-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-154"><a href="#cb31-154" aria-hidden="true" tabindex="-1"></a>X_train <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(train_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb31-155"><a href="#cb31-155" aria-hidden="true" tabindex="-1"></a>Y_train <span class="ot">&lt;-</span> train_data[[response_var]]</span>
+<span id="cb31-156"><a href="#cb31-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-157"><a href="#cb31-157" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a grid of values for z to show the prediction interval</span></span>
+<span id="cb31-158"><a href="#cb31-158" aria-hidden="true" tabindex="-1"></a>z_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(cholost_clean<span class="sc">$</span>z), <span class="fu">max</span>(cholost_clean<span class="sc">$</span>z), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb31-159"><a href="#cb31-159" aria-hidden="true" tabindex="-1"></a>X_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(z_grid, <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb31-160"><a href="#cb31-160" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">z =</span> z_grid, <span class="at">y_pred =</span> <span class="cn">NA</span>, <span class="at">lower =</span> <span class="cn">NA</span>, <span class="at">upper =</span> <span class="cn">NA</span>)</span>
+<span id="cb31-161"><a href="#cb31-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-162"><a href="#cb31-162" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(z_grid)) {</span>
+<span id="cb31-163"><a href="#cb31-163" aria-hidden="true" tabindex="-1"></a>  pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_quad_pred_interval</span>(X_train, Y_train, X_grid[i, , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb31-164"><a href="#cb31-164" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>y_pred[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>prediction</span>
+<span id="cb31-165"><a href="#cb31-165" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>lower[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>lower</span>
+<span id="cb31-166"><a href="#cb31-166" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>upper[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>upper</span>
+<span id="cb31-167"><a href="#cb31-167" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-168"><a href="#cb31-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-169"><a href="#cb31-169" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb31-170"><a href="#cb31-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> train_data, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y, <span class="at">color =</span> <span class="st">"Training Data"</span>)) <span class="sc">+</span></span>
+<span id="cb31-171"><a href="#cb31-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> test_data, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y, <span class="at">color =</span> <span class="st">"Test Data"</span>)) <span class="sc">+</span></span>
+<span id="cb31-172"><a href="#cb31-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y_pred), <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb31-173"><a href="#cb31-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), </span>
+<span id="cb31-174"><a href="#cb31-174" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">fill =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb31-175"><a href="#cb31-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Training Data"</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">"Test Data"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb31-176"><a href="#cb31-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cholost Dataset with Quadratic Prediction Intervals"</span>,</span>
+<span id="cb31-177"><a href="#cb31-177" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"True Coverage:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(results<span class="sc">$</span>true_coverage), <span class="dv">4</span>), </span>
+<span id="cb31-178"><a href="#cb31-178" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"| LOO Estimate:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(results<span class="sc">$</span>loo_coverage), <span class="dv">4</span>)),</span>
+<span id="cb31-179"><a href="#cb31-179" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Compliance"</span>, <span class="at">y =</span> <span class="st">"Improvement"</span>, <span class="at">color =</span> <span class="st">"Data Type"</span>) <span class="sc">+</span></span>
+<span id="cb31-180"><a href="#cb31-180" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb31-181"><a href="#cb31-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-182"><a href="#cb31-182" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plots</span></span>
+<span id="cb31-183"><a href="#cb31-183" aria-hidden="true" tabindex="-1"></a><span class="co">#grid.arrange(p1, p2, p3, ncol = 2, layout_matrix = rbind(c(1,2), c(3,3)))</span></span>
+<span id="cb31-184"><a href="#cb31-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-185"><a href="#cb31-185" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/quadratic-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/quadratic-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="04-prediction-sets-regression_files/figure-html/quadratic-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print summary statistics</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Summary Statistics ---</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+--- Summary Statistics ---</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(avg_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  mean_true_coverage mean_loo_coverage sd_true_coverage sd_loo_coverage
+1          0.9358902         0.9344268       0.03171133       0.0135256
+  mean_squared_diff
+1        0.00148602</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean True Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_true_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Mean True Coverage: 0.9359</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean LOO Coverage Estimate:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_loo_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Mean LOO Coverage Estimate: 0.9344</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean Squared Difference:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_squared_diff, <span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Mean Squared Difference: 0.001486</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Standard Deviation of True Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>sd_true_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Standard Deviation of True Coverage: 0.0317</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Standard Deviation of LOO Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>sd_loo_coverage, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Standard Deviation of LOO Coverage: 0.0135</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Also fit a standard quadratic model once to examine the relationship</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>train_quad <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> z <span class="sc">+</span> <span class="fu">I</span>(z<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> train_data)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(train_quad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = y ~ z + I(z^2), data = train_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-53.568 -13.064   3.445  17.227  55.313 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)  5.458842   8.232416   0.663    0.509  
+z           -0.019853   0.364572  -0.054    0.957  
+I(z^2)       0.006024   0.003207   1.878    0.064 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 22.64 on 79 degrees of freedom
+Multiple R-squared:  0.4941,    Adjusted R-squared:  0.4813 
+F-statistic: 38.58 on 2 and 79 DF,  p-value: 2.046e-12</code></pre>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb50" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Prediction set coverage on a real example"</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Compliance in cholostyramine data"</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: false</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Using the cholostyramine dataset from the bootstrap package</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup, message=FALSE}</span></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a><span class="in">library(bootstrap)  # For the cholost dataset</span></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(20050724)</span></span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a><span class="in"># Load the cholost dataset</span></span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a><span class="in">data(cholost)</span></span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a><span class="in"># Confirm dataset structure</span></span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a><span class="in">head(cholost)</span></span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a><span class="in">dim(cholost)  # Should be 164×2</span></span>
+<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Functions to compute the prediction interval</span></span>
+<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{r funct1}</span></span>
+<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to calculate OLS prediction interval</span></span>
+<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a><span class="in">calculate_pred_interval &lt;- function(X, Y, X_new, alpha = 0.05) {</span></span>
+<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a><span class="in">  n &lt;- nrow(X)</span></span>
+<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a><span class="in">  p &lt;- ncol(X)</span></span>
+<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate beta hat</span></span>
+<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a><span class="in">  beta_hat &lt;- solve(t(X) %*% X) %*% t(X) %*% Y</span></span>
+<span id="cb50-38"><a href="#cb50-38" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-39"><a href="#cb50-39" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate fitted values</span></span>
+<span id="cb50-40"><a href="#cb50-40" aria-hidden="true" tabindex="-1"></a><span class="in">  Y_hat &lt;- X %*% beta_hat</span></span>
+<span id="cb50-41"><a href="#cb50-41" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-42"><a href="#cb50-42" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate sigma hat squared</span></span>
+<span id="cb50-43"><a href="#cb50-43" aria-hidden="true" tabindex="-1"></a><span class="in">  sigma_hat_squared &lt;- sum((Y - Y_hat)^2) / (n - p)</span></span>
+<span id="cb50-44"><a href="#cb50-44" aria-hidden="true" tabindex="-1"></a><span class="in">  sigma_hat &lt;- sqrt(sigma_hat_squared)</span></span>
+<span id="cb50-45"><a href="#cb50-45" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-46"><a href="#cb50-46" aria-hidden="true" tabindex="-1"></a><span class="in">  # Make sure X_new is properly formatted as a row vector</span></span>
+<span id="cb50-47"><a href="#cb50-47" aria-hidden="true" tabindex="-1"></a><span class="in">  if(is.vector(X_new)) X_new &lt;- matrix(X_new, nrow=1)</span></span>
+<span id="cb50-48"><a href="#cb50-48" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-49"><a href="#cb50-49" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate prediction for new observation</span></span>
+<span id="cb50-50"><a href="#cb50-50" aria-hidden="true" tabindex="-1"></a><span class="in">  Y_pred &lt;- as.numeric(X_new %*% beta_hat)</span></span>
+<span id="cb50-51"><a href="#cb50-51" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-52"><a href="#cb50-52" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate prediction interval width</span></span>
+<span id="cb50-53"><a href="#cb50-53" aria-hidden="true" tabindex="-1"></a><span class="in">  pred_var &lt;- sigma_hat_squared * (1 + as.numeric(X_new %*% solve(t(X) %*% X) %*% t(X_new)))</span></span>
+<span id="cb50-54"><a href="#cb50-54" aria-hidden="true" tabindex="-1"></a><span class="in">  pred_interval_width &lt;- qnorm(1 - alpha/2) * sqrt(pred_var)</span></span>
+<span id="cb50-55"><a href="#cb50-55" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-56"><a href="#cb50-56" aria-hidden="true" tabindex="-1"></a><span class="in">  # Return prediction and interval bounds</span></span>
+<span id="cb50-57"><a href="#cb50-57" aria-hidden="true" tabindex="-1"></a><span class="in">  return(list(</span></span>
+<span id="cb50-58"><a href="#cb50-58" aria-hidden="true" tabindex="-1"></a><span class="in">    prediction = Y_pred,</span></span>
+<span id="cb50-59"><a href="#cb50-59" aria-hidden="true" tabindex="-1"></a><span class="in">    lower = Y_pred - pred_interval_width,</span></span>
+<span id="cb50-60"><a href="#cb50-60" aria-hidden="true" tabindex="-1"></a><span class="in">    upper = Y_pred + pred_interval_width</span></span>
+<span id="cb50-61"><a href="#cb50-61" aria-hidden="true" tabindex="-1"></a><span class="in">  ))</span></span>
+<span id="cb50-62"><a href="#cb50-62" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb50-63"><a href="#cb50-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb50-64"><a href="#cb50-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-65"><a href="#cb50-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-66"><a href="#cb50-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loocoverage}</span></span>
+<span id="cb50-67"><a href="#cb50-67" aria-hidden="true" tabindex="-1"></a><span class="in"># Function for leave-one-out estimate of coverage probability</span></span>
+<span id="cb50-68"><a href="#cb50-68" aria-hidden="true" tabindex="-1"></a><span class="in">loo_coverage_probability &lt;- function(X, Y, alpha = 0.05) {</span></span>
+<span id="cb50-69"><a href="#cb50-69" aria-hidden="true" tabindex="-1"></a><span class="in">  n &lt;- nrow(X)</span></span>
+<span id="cb50-70"><a href="#cb50-70" aria-hidden="true" tabindex="-1"></a><span class="in">  covered &lt;- 0</span></span>
+<span id="cb50-71"><a href="#cb50-71" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-72"><a href="#cb50-72" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:n) {</span></span>
+<span id="cb50-73"><a href="#cb50-73" aria-hidden="true" tabindex="-1"></a><span class="in">    X_train &lt;- X[-i, , drop = FALSE]</span></span>
+<span id="cb50-74"><a href="#cb50-74" aria-hidden="true" tabindex="-1"></a><span class="in">    Y_train &lt;- Y[-i]</span></span>
+<span id="cb50-75"><a href="#cb50-75" aria-hidden="true" tabindex="-1"></a><span class="in">    X_test &lt;- matrix(X[i, ], nrow = 1)</span></span>
+<span id="cb50-76"><a href="#cb50-76" aria-hidden="true" tabindex="-1"></a><span class="in">    Y_test &lt;- Y[i]</span></span>
+<span id="cb50-77"><a href="#cb50-77" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb50-78"><a href="#cb50-78" aria-hidden="true" tabindex="-1"></a><span class="in">    tryCatch({</span></span>
+<span id="cb50-79"><a href="#cb50-79" aria-hidden="true" tabindex="-1"></a><span class="in">      pred_interval &lt;- calculate_pred_interval(X_train, Y_train, X_test, alpha)</span></span>
+<span id="cb50-80"><a href="#cb50-80" aria-hidden="true" tabindex="-1"></a><span class="in">      if (Y_test &gt;= pred_interval$lower &amp;&amp; Y_test &lt;= pred_interval$upper) {</span></span>
+<span id="cb50-81"><a href="#cb50-81" aria-hidden="true" tabindex="-1"></a><span class="in">        covered &lt;- covered + 1</span></span>
+<span id="cb50-82"><a href="#cb50-82" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
+<span id="cb50-83"><a href="#cb50-83" aria-hidden="true" tabindex="-1"></a><span class="in">    }, error = function(e) {</span></span>
+<span id="cb50-84"><a href="#cb50-84" aria-hidden="true" tabindex="-1"></a><span class="in">      cat("Error in LOO iteration", i, ":", e$message, "\n")</span></span>
+<span id="cb50-85"><a href="#cb50-85" aria-hidden="true" tabindex="-1"></a><span class="in">    })</span></span>
+<span id="cb50-86"><a href="#cb50-86" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb50-87"><a href="#cb50-87" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-88"><a href="#cb50-88" aria-hidden="true" tabindex="-1"></a><span class="in">  return(covered / n)</span></span>
+<span id="cb50-89"><a href="#cb50-89" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb50-90"><a href="#cb50-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb50-91"><a href="#cb50-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-94"><a href="#cb50-94" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb50-95"><a href="#cb50-95" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the dataset - handling missing values if any</span></span>
+<span id="cb50-96"><a href="#cb50-96" aria-hidden="true" tabindex="-1"></a>cholost_clean <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(cholost)</span>
+<span id="cb50-97"><a href="#cb50-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-98"><a href="#cb50-98" aria-hidden="true" tabindex="-1"></a><span class="co"># Define response and predictor</span></span>
+<span id="cb50-99"><a href="#cb50-99" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">"y"</span>  <span class="co"># The response variable</span></span>
+<span id="cb50-100"><a href="#cb50-100" aria-hidden="true" tabindex="-1"></a>predictor_var <span class="ot">&lt;-</span> <span class="st">"z"</span>  <span class="co"># The predictor variable</span></span>
+<span id="cb50-101"><a href="#cb50-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-102"><a href="#cb50-102" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeat the experiment multiple times to get a distribution of results</span></span>
+<span id="cb50-103"><a href="#cb50-103" aria-hidden="true" tabindex="-1"></a>n_reps <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb50-104"><a href="#cb50-104" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb50-105"><a href="#cb50-105" aria-hidden="true" tabindex="-1"></a>  <span class="at">rep =</span> <span class="dv">1</span><span class="sc">:</span>n_reps,</span>
+<span id="cb50-106"><a href="#cb50-106" aria-hidden="true" tabindex="-1"></a>  <span class="at">true_coverage =</span> <span class="fu">numeric</span>(n_reps),</span>
+<span id="cb50-107"><a href="#cb50-107" aria-hidden="true" tabindex="-1"></a>  <span class="at">loo_coverage =</span> <span class="fu">numeric</span>(n_reps),</span>
+<span id="cb50-108"><a href="#cb50-108" aria-hidden="true" tabindex="-1"></a>  <span class="at">diff_squared =</span> <span class="fu">numeric</span>(n_reps)</span>
+<span id="cb50-109"><a href="#cb50-109" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-110"><a href="#cb50-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-111"><a href="#cb50-111" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (rep <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_reps) {</span>
+<span id="cb50-112"><a href="#cb50-112" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Randomly split the data into training (50%) and test (50%) sets</span></span>
+<span id="cb50-113"><a href="#cb50-113" aria-hidden="true" tabindex="-1"></a>  n_total <span class="ot">&lt;-</span> <span class="fu">nrow</span>(cholost_clean)</span>
+<span id="cb50-114"><a href="#cb50-114" aria-hidden="true" tabindex="-1"></a>  train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n_total, <span class="at">size =</span> <span class="fu">floor</span>(n_total<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb50-115"><a href="#cb50-115" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-116"><a href="#cb50-116" aria-hidden="true" tabindex="-1"></a>  train_data <span class="ot">&lt;-</span> cholost_clean[train_indices, ]</span>
+<span id="cb50-117"><a href="#cb50-117" aria-hidden="true" tabindex="-1"></a>  test_data <span class="ot">&lt;-</span> cholost_clean[<span class="sc">-</span>train_indices, ]</span>
+<span id="cb50-118"><a href="#cb50-118" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-119"><a href="#cb50-119" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare matrices for training</span></span>
+<span id="cb50-120"><a href="#cb50-120" aria-hidden="true" tabindex="-1"></a>  X_train <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(train_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb50-121"><a href="#cb50-121" aria-hidden="true" tabindex="-1"></a>  Y_train <span class="ot">&lt;-</span> train_data[[response_var]]</span>
+<span id="cb50-122"><a href="#cb50-122" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-123"><a href="#cb50-123" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Prepare matrices for testing</span></span>
+<span id="cb50-124"><a href="#cb50-124" aria-hidden="true" tabindex="-1"></a>  X_test <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(test_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb50-125"><a href="#cb50-125" aria-hidden="true" tabindex="-1"></a>  Y_test <span class="ot">&lt;-</span> test_data[[response_var]]</span>
+<span id="cb50-126"><a href="#cb50-126" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-127"><a href="#cb50-127" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate true coverage on test set</span></span>
+<span id="cb50-128"><a href="#cb50-128" aria-hidden="true" tabindex="-1"></a>  covered <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb50-129"><a href="#cb50-129" aria-hidden="true" tabindex="-1"></a>  n_test <span class="ot">&lt;-</span> <span class="fu">nrow</span>(test_data)</span>
+<span id="cb50-130"><a href="#cb50-130" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-131"><a href="#cb50-131" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_test) {</span>
+<span id="cb50-132"><a href="#cb50-132" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tryCatch</span>({</span>
+<span id="cb50-133"><a href="#cb50-133" aria-hidden="true" tabindex="-1"></a>      pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_pred_interval</span>(X_train, Y_train, X_test[i, , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-134"><a href="#cb50-134" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (Y_test[i] <span class="sc">&gt;=</span> pred_interval<span class="sc">$</span>lower <span class="sc">&amp;&amp;</span> Y_test[i] <span class="sc">&lt;=</span> pred_interval<span class="sc">$</span>upper) {</span>
+<span id="cb50-135"><a href="#cb50-135" aria-hidden="true" tabindex="-1"></a>        covered <span class="ot">&lt;-</span> covered <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb50-136"><a href="#cb50-136" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb50-137"><a href="#cb50-137" aria-hidden="true" tabindex="-1"></a>    }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb50-138"><a href="#cb50-138" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cat</span>(<span class="st">"Error in test coverage calculation, iteration"</span>, i, <span class="st">":"</span>, e<span class="sc">$</span>message, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb50-139"><a href="#cb50-139" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb50-140"><a href="#cb50-140" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb50-141"><a href="#cb50-141" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-142"><a href="#cb50-142" aria-hidden="true" tabindex="-1"></a>  true_cov <span class="ot">&lt;-</span> covered <span class="sc">/</span> n_test</span>
+<span id="cb50-143"><a href="#cb50-143" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-144"><a href="#cb50-144" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate LOO coverage estimate on training set</span></span>
+<span id="cb50-145"><a href="#cb50-145" aria-hidden="true" tabindex="-1"></a>  loo_cov <span class="ot">&lt;-</span> <span class="fu">loo_coverage_probability</span>(X_train, Y_train, <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-146"><a href="#cb50-146" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb50-147"><a href="#cb50-147" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Store results</span></span>
+<span id="cb50-148"><a href="#cb50-148" aria-hidden="true" tabindex="-1"></a>  results[rep, ] <span class="ot">&lt;-</span> <span class="fu">c</span>(rep, true_cov, loo_cov, (true_cov <span class="sc">-</span> loo_cov)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb50-149"><a href="#cb50-149" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-150"><a href="#cb50-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-151"><a href="#cb50-151" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average results</span></span>
+<span id="cb50-152"><a href="#cb50-152" aria-hidden="true" tabindex="-1"></a>avg_results <span class="ot">&lt;-</span> <span class="fu">summarize</span>(results,</span>
+<span id="cb50-153"><a href="#cb50-153" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_true_coverage =</span> <span class="fu">mean</span>(true_coverage),</span>
+<span id="cb50-154"><a href="#cb50-154" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_loo_coverage =</span> <span class="fu">mean</span>(loo_coverage),</span>
+<span id="cb50-155"><a href="#cb50-155" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sd_true_coverage =</span> <span class="fu">sd</span>(true_coverage),</span>
+<span id="cb50-156"><a href="#cb50-156" aria-hidden="true" tabindex="-1"></a>                      <span class="at">sd_loo_coverage =</span> <span class="fu">sd</span>(loo_coverage),</span>
+<span id="cb50-157"><a href="#cb50-157" aria-hidden="true" tabindex="-1"></a>                      <span class="at">mean_squared_diff =</span> <span class="fu">mean</span>(diff_squared))</span>
+<span id="cb50-158"><a href="#cb50-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-159"><a href="#cb50-159" aria-hidden="true" tabindex="-1"></a><span class="co"># Create visualization</span></span>
+<span id="cb50-160"><a href="#cb50-160" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> loo_coverage, <span class="at">y =</span> true_coverage)) <span class="sc">+</span></span>
+<span id="cb50-161"><a href="#cb50-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb50-162"><a href="#cb50-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb50-163"><a href="#cb50-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LOO Coverage Estimate vs. True Coverage"</span>,</span>
+<span id="cb50-164"><a href="#cb50-164" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"Cholost Dataset ("</span>, n_reps, <span class="st">"random splits)"</span>),</span>
+<span id="cb50-165"><a href="#cb50-165" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Leave-One-Out Coverage Estimate"</span>,</span>
+<span id="cb50-166"><a href="#cb50-166" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"True Coverage on Test Set"</span>) <span class="sc">+</span></span>
+<span id="cb50-167"><a href="#cb50-167" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb50-168"><a href="#cb50-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-169"><a href="#cb50-169" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of differences</span></span>
+<span id="cb50-170"><a href="#cb50-170" aria-hidden="true" tabindex="-1"></a>results<span class="sc">$</span>difference <span class="ot">&lt;-</span> results<span class="sc">$</span>true_coverage <span class="sc">-</span> results<span class="sc">$</span>loo_coverage</span>
+<span id="cb50-171"><a href="#cb50-171" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(results, <span class="fu">aes</span>(<span class="at">x =</span> difference)) <span class="sc">+</span></span>
+<span id="cb50-172"><a href="#cb50-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb50-173"><a href="#cb50-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb50-174"><a href="#cb50-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="co">#title = "Distribution of Differences",</span></span>
+<span id="cb50-175"><a href="#cb50-175" aria-hidden="true" tabindex="-1"></a>       <span class="co">#subtitle = #"True Coverage - LOO Coverage Estimate",</span></span>
+<span id="cb50-176"><a href="#cb50-176" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Difference"</span>,</span>
+<span id="cb50-177"><a href="#cb50-177" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb50-178"><a href="#cb50-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb50-179"><a href="#cb50-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-180"><a href="#cb50-180" aria-hidden="true" tabindex="-1"></a>p2</span>
+<span id="cb50-181"><a href="#cb50-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-182"><a href="#cb50-182" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"histogramdifferences.png"</span>,p2,<span class="at">width=</span><span class="dv">6</span>,<span class="at">height=</span><span class="dv">4</span>,<span class="at">bg=</span><span class="st">"white"</span>)</span>
+<span id="cb50-183"><a href="#cb50-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-184"><a href="#cb50-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-185"><a href="#cb50-185" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a scatter plot with the data and prediction intervals</span></span>
+<span id="cb50-186"><a href="#cb50-186" aria-hidden="true" tabindex="-1"></a><span class="co"># (Using one random training set for visualization)</span></span>
+<span id="cb50-187"><a href="#cb50-187" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">44112</span>)</span>
+<span id="cb50-188"><a href="#cb50-188" aria-hidden="true" tabindex="-1"></a>train_indices <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cholost_clean), <span class="at">size =</span> <span class="fu">floor</span>(<span class="fu">nrow</span>(cholost_clean)<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb50-189"><a href="#cb50-189" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> cholost_clean[train_indices, ]</span>
+<span id="cb50-190"><a href="#cb50-190" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> cholost_clean[<span class="sc">-</span>train_indices, ]</span>
+<span id="cb50-191"><a href="#cb50-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-192"><a href="#cb50-192" aria-hidden="true" tabindex="-1"></a>X_train <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(train_data[, predictor_var, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb50-193"><a href="#cb50-193" aria-hidden="true" tabindex="-1"></a>Y_train <span class="ot">&lt;-</span> train_data[[response_var]]</span>
+<span id="cb50-194"><a href="#cb50-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-195"><a href="#cb50-195" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a grid of values for z to show the prediction interval</span></span>
+<span id="cb50-196"><a href="#cb50-196" aria-hidden="true" tabindex="-1"></a>z_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(cholost_clean<span class="sc">$</span>z), <span class="fu">max</span>(cholost_clean<span class="sc">$</span>z), <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb50-197"><a href="#cb50-197" aria-hidden="true" tabindex="-1"></a>X_grid <span class="ot">&lt;-</span> <span class="fu">matrix</span>(z_grid, <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb50-198"><a href="#cb50-198" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">z =</span> z_grid, <span class="at">y_pred =</span> <span class="cn">NA</span>, <span class="at">lower =</span> <span class="cn">NA</span>, <span class="at">upper =</span> <span class="cn">NA</span>)</span>
+<span id="cb50-199"><a href="#cb50-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-200"><a href="#cb50-200" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(z_grid)) {</span>
+<span id="cb50-201"><a href="#cb50-201" aria-hidden="true" tabindex="-1"></a>  pred_interval <span class="ot">&lt;-</span> <span class="fu">calculate_pred_interval</span>(X_train, Y_train, X_grid[i, , <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="at">alpha =</span> <span class="fl">0.05</span>)</span>
+<span id="cb50-202"><a href="#cb50-202" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>y_pred[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>prediction</span>
+<span id="cb50-203"><a href="#cb50-203" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>lower[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>lower</span>
+<span id="cb50-204"><a href="#cb50-204" aria-hidden="true" tabindex="-1"></a>  predictions<span class="sc">$</span>upper[i] <span class="ot">&lt;-</span> pred_interval<span class="sc">$</span>upper</span>
+<span id="cb50-205"><a href="#cb50-205" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-206"><a href="#cb50-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-207"><a href="#cb50-207" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb50-208"><a href="#cb50-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> train_data, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y, <span class="at">color =</span> <span class="st">"Training Data"</span>)) <span class="sc">+</span></span>
+<span id="cb50-209"><a href="#cb50-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> test_data, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y, <span class="at">color =</span> <span class="st">"Test Data"</span>)) <span class="sc">+</span></span>
+<span id="cb50-210"><a href="#cb50-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> y_pred), <span class="at">color =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb50-211"><a href="#cb50-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> predictions, <span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), </span>
+<span id="cb50-212"><a href="#cb50-212" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">fill =</span> <span class="st">"blue"</span>) <span class="sc">+</span></span>
+<span id="cb50-213"><a href="#cb50-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Training Data"</span> <span class="ot">=</span> <span class="st">"black"</span>, <span class="st">"Test Data"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb50-214"><a href="#cb50-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cholost Dataset with Prediction Intervals"</span>,</span>
+<span id="cb50-215"><a href="#cb50-215" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"True Coverage:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(results<span class="sc">$</span>true_coverage), <span class="dv">4</span>), </span>
+<span id="cb50-216"><a href="#cb50-216" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"| LOO Estimate:"</span>, <span class="fu">round</span>(<span class="fu">mean</span>(results<span class="sc">$</span>loo_coverage), <span class="dv">4</span>)),</span>
+<span id="cb50-217"><a href="#cb50-217" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">"Compliance"</span>, <span class="at">y =</span> <span class="st">"Improvement"</span>, <span class="at">color =</span> <span class="st">"Data Type"</span>) <span class="sc">+</span></span>
+<span id="cb50-218"><a href="#cb50-218" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb50-219"><a href="#cb50-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-220"><a href="#cb50-220" aria-hidden="true" tabindex="-1"></a><span class="co"># Display plots</span></span>
+<span id="cb50-221"><a href="#cb50-221" aria-hidden="true" tabindex="-1"></a><span class="co">#grid.arrange(p1, p2, p3, ncol = 2, layout_matrix = rbind(c(1,2), c(3,3)))</span></span>
+<span id="cb50-222"><a href="#cb50-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-223"><a href="#cb50-223" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p1)</span>
+<span id="cb50-224"><a href="#cb50-224" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p2)</span>
+<span id="cb50-225"><a href="#cb50-225" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p3)</span>
+<span id="cb50-226"><a href="#cb50-226" aria-hidden="true" tabindex="-1"></a><span class="co"># Print summary statistics</span></span>
+<span id="cb50-227"><a href="#cb50-227" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">--- Summary Statistics ---</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb50-228"><a href="#cb50-228" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(avg_results)</span>
+<span id="cb50-229"><a href="#cb50-229" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean True Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_true_coverage, <span class="dv">4</span>))</span>
+<span id="cb50-230"><a href="#cb50-230" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean LOO Coverage Estimate:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_loo_coverage, <span class="dv">4</span>))</span>
+<span id="cb50-231"><a href="#cb50-231" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Mean Squared Difference:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>mean_squared_diff, <span class="dv">6</span>))</span>
+<span id="cb50-232"><a href="#cb50-232" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Standard Deviation of True Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>sd_true_coverage, <span class="dv">4</span>))</span>
+<span id="cb50-233"><a href="#cb50-233" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Standard Deviation of LOO Coverage:"</span>, <span class="fu">round</span>(avg_results<span class="sc">$</span>sd_loo_coverage, <span class="dv">4</span>))</span>
+<span id="cb50-234"><a href="#cb50-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-235"><a href="#cb50-235" aria-hidden="true" tabindex="-1"></a><span class="co"># Also fit a standard linear model once to examine the relationship</span></span>
+<span id="cb50-236"><a href="#cb50-236" aria-hidden="true" tabindex="-1"></a>train_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> z, <span class="at">data =</span> train_data)</span>
+<span id="cb50-237"><a href="#cb50-237" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(train_lm)</span>
+<span id="cb50-238"><a href="#cb50-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb50-239"><a href="#cb50-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-240"><a href="#cb50-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-241"><a href="#cb50-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## The quadratic version</span></span>
+<span id="cb50-242"><a href="#cb50-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-243"><a href="#cb50-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r quadratic}</span></span>
+<span id="cb50-244"><a href="#cb50-244" aria-hidden="true" tabindex="-1"></a><span class="in">library(bootstrap)  # For the cholost dataset</span></span>
+<span id="cb50-245"><a href="#cb50-245" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb50-246"><a href="#cb50-246" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb50-247"><a href="#cb50-247" aria-hidden="true" tabindex="-1"></a><span class="in">library(gridExtra)</span></span>
+<span id="cb50-248"><a href="#cb50-248" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(42)</span></span>
+<span id="cb50-249"><a href="#cb50-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-250"><a href="#cb50-250" aria-hidden="true" tabindex="-1"></a><span class="in"># Load the cholost dataset</span></span>
+<span id="cb50-251"><a href="#cb50-251" aria-hidden="true" tabindex="-1"></a><span class="in">data(cholost)</span></span>
+<span id="cb50-252"><a href="#cb50-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-253"><a href="#cb50-253" aria-hidden="true" tabindex="-1"></a><span class="in"># Confirm dataset structure</span></span>
+<span id="cb50-254"><a href="#cb50-254" aria-hidden="true" tabindex="-1"></a><span class="in">head(cholost)</span></span>
+<span id="cb50-255"><a href="#cb50-255" aria-hidden="true" tabindex="-1"></a><span class="in">dim(cholost)  # Should be 164×2</span></span>
+<span id="cb50-256"><a href="#cb50-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-257"><a href="#cb50-257" aria-hidden="true" tabindex="-1"></a><span class="in"># Function to calculate quadratic regression prediction interval</span></span>
+<span id="cb50-258"><a href="#cb50-258" aria-hidden="true" tabindex="-1"></a><span class="in">calculate_quad_pred_interval &lt;- function(X, Y, X_new, alpha = 0.05) {</span></span>
+<span id="cb50-259"><a href="#cb50-259" aria-hidden="true" tabindex="-1"></a><span class="in">  # For quadratic regression, we'll add a squared term to the design matrix</span></span>
+<span id="cb50-260"><a href="#cb50-260" aria-hidden="true" tabindex="-1"></a><span class="in">  X_quad &lt;- cbind(X, X^2)</span></span>
+<span id="cb50-261"><a href="#cb50-261" aria-hidden="true" tabindex="-1"></a><span class="in">  colnames(X_quad) &lt;- c("z", "z_squared")</span></span>
+<span id="cb50-262"><a href="#cb50-262" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-263"><a href="#cb50-263" aria-hidden="true" tabindex="-1"></a><span class="in">  # For prediction, also square the new X</span></span>
+<span id="cb50-264"><a href="#cb50-264" aria-hidden="true" tabindex="-1"></a><span class="in">  X_new_quad &lt;- cbind(X_new, X_new^2)</span></span>
+<span id="cb50-265"><a href="#cb50-265" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-266"><a href="#cb50-266" aria-hidden="true" tabindex="-1"></a><span class="in">  n &lt;- nrow(X_quad)</span></span>
+<span id="cb50-267"><a href="#cb50-267" aria-hidden="true" tabindex="-1"></a><span class="in">  p &lt;- ncol(X_quad)</span></span>
+<span id="cb50-268"><a href="#cb50-268" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-269"><a href="#cb50-269" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate beta hat</span></span>
+<span id="cb50-270"><a href="#cb50-270" aria-hidden="true" tabindex="-1"></a><span class="in">  beta_hat &lt;- solve(t(X_quad) %*% X_quad) %*% t(X_quad) %*% Y</span></span>
+<span id="cb50-271"><a href="#cb50-271" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-272"><a href="#cb50-272" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate fitted values</span></span>
+<span id="cb50-273"><a href="#cb50-273" aria-hidden="true" tabindex="-1"></a><span class="in">  Y_hat &lt;- X_quad %*% beta_hat</span></span>
+<span id="cb50-274"><a href="#cb50-274" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-275"><a href="#cb50-275" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate sigma hat squared</span></span>
+<span id="cb50-276"><a href="#cb50-276" aria-hidden="true" tabindex="-1"></a><span class="in">  sigma_hat_squared &lt;- sum((Y - Y_hat)^2) / (n - p)</span></span>
+<span id="cb50-277"><a href="#cb50-277" aria-hidden="true" tabindex="-1"></a><span class="in">  sigma_hat &lt;- sqrt(sigma_hat_squared)</span></span>
+<span id="cb50-278"><a href="#cb50-278" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-279"><a href="#cb50-279" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate prediction for new observation</span></span>
+<span id="cb50-280"><a href="#cb50-280" aria-hidden="true" tabindex="-1"></a><span class="in">  Y_pred &lt;- as.numeric(X_new_quad %*% beta_hat)</span></span>
+<span id="cb50-281"><a href="#cb50-281" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-282"><a href="#cb50-282" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate prediction interval width</span></span>
+<span id="cb50-283"><a href="#cb50-283" aria-hidden="true" tabindex="-1"></a><span class="in">  pred_var &lt;- sigma_hat_squared * (1 + as.numeric(X_new_quad %*% solve(t(X_quad) %*% X_quad) %*% t(X_new_quad)))</span></span>
+<span id="cb50-284"><a href="#cb50-284" aria-hidden="true" tabindex="-1"></a><span class="in">  pred_interval_width &lt;- qnorm(1 - alpha/2) * sqrt(pred_var)</span></span>
+<span id="cb50-285"><a href="#cb50-285" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-286"><a href="#cb50-286" aria-hidden="true" tabindex="-1"></a><span class="in">  # Return prediction and interval bounds</span></span>
+<span id="cb50-287"><a href="#cb50-287" aria-hidden="true" tabindex="-1"></a><span class="in">  return(list(</span></span>
+<span id="cb50-288"><a href="#cb50-288" aria-hidden="true" tabindex="-1"></a><span class="in">    prediction = Y_pred,</span></span>
+<span id="cb50-289"><a href="#cb50-289" aria-hidden="true" tabindex="-1"></a><span class="in">    lower = Y_pred - pred_interval_width,</span></span>
+<span id="cb50-290"><a href="#cb50-290" aria-hidden="true" tabindex="-1"></a><span class="in">    upper = Y_pred + pred_interval_width</span></span>
+<span id="cb50-291"><a href="#cb50-291" aria-hidden="true" tabindex="-1"></a><span class="in">  ))</span></span>
+<span id="cb50-292"><a href="#cb50-292" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb50-293"><a href="#cb50-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-294"><a href="#cb50-294" aria-hidden="true" tabindex="-1"></a><span class="in"># Function for leave-one-out estimate of coverage probability with quadratic regression</span></span>
+<span id="cb50-295"><a href="#cb50-295" aria-hidden="true" tabindex="-1"></a><span class="in">loo_coverage_probability &lt;- function(X, Y, alpha = 0.05) {</span></span>
+<span id="cb50-296"><a href="#cb50-296" aria-hidden="true" tabindex="-1"></a><span class="in">  n &lt;- nrow(X)</span></span>
+<span id="cb50-297"><a href="#cb50-297" aria-hidden="true" tabindex="-1"></a><span class="in">  covered &lt;- 0</span></span>
+<span id="cb50-298"><a href="#cb50-298" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-299"><a href="#cb50-299" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:n) {</span></span>
+<span id="cb50-300"><a href="#cb50-300" aria-hidden="true" tabindex="-1"></a><span class="in">    X_train &lt;- X[-i, , drop = FALSE]</span></span>
+<span id="cb50-301"><a href="#cb50-301" aria-hidden="true" tabindex="-1"></a><span class="in">    Y_train &lt;- Y[-i]</span></span>
+<span id="cb50-302"><a href="#cb50-302" aria-hidden="true" tabindex="-1"></a><span class="in">    X_test &lt;- matrix(X[i, ], nrow = 1)</span></span>
+<span id="cb50-303"><a href="#cb50-303" aria-hidden="true" tabindex="-1"></a><span class="in">    Y_test &lt;- Y[i]</span></span>
+<span id="cb50-304"><a href="#cb50-304" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb50-305"><a href="#cb50-305" aria-hidden="true" tabindex="-1"></a><span class="in">    tryCatch({</span></span>
+<span id="cb50-306"><a href="#cb50-306" aria-hidden="true" tabindex="-1"></a><span class="in">      pred_interval &lt;- calculate_quad_pred_interval(X_train, Y_train, X_test, alpha)</span></span>
+<span id="cb50-307"><a href="#cb50-307" aria-hidden="true" tabindex="-1"></a><span class="in">      if (Y_test &gt;= pred_interval$lower &amp;&amp; Y_test &lt;= pred_interval$upper) {</span></span>
+<span id="cb50-308"><a href="#cb50-308" aria-hidden="true" tabindex="-1"></a><span class="in">        covered &lt;- covered + 1</span></span>
+<span id="cb50-309"><a href="#cb50-309" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
+<span id="cb50-310"><a href="#cb50-310" aria-hidden="true" tabindex="-1"></a><span class="in">    }, error = function(e) {</span></span>
+<span id="cb50-311"><a href="#cb50-311" aria-hidden="true" tabindex="-1"></a><span class="in">      cat("Error in LOO iteration", i, ":", e$message, "\n")</span></span>
+<span id="cb50-312"><a href="#cb50-312" aria-hidden="true" tabindex="-1"></a><span class="in">    })</span></span>
+<span id="cb50-313"><a href="#cb50-313" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb50-314"><a href="#cb50-314" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-315"><a href="#cb50-315" aria-hidden="true" tabindex="-1"></a><span class="in">  return(covered / n)</span></span>
+<span id="cb50-316"><a href="#cb50-316" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb50-317"><a href="#cb50-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-318"><a href="#cb50-318" aria-hidden="true" tabindex="-1"></a><span class="in"># Prepare the dataset - handling missing values if any</span></span>
+<span id="cb50-319"><a href="#cb50-319" aria-hidden="true" tabindex="-1"></a><span class="in">cholost_clean &lt;- na.omit(cholost)</span></span>
+<span id="cb50-320"><a href="#cb50-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-321"><a href="#cb50-321" aria-hidden="true" tabindex="-1"></a><span class="in"># Define response and predictor</span></span>
+<span id="cb50-322"><a href="#cb50-322" aria-hidden="true" tabindex="-1"></a><span class="in">response_var &lt;- "y"  # The response variable</span></span>
+<span id="cb50-323"><a href="#cb50-323" aria-hidden="true" tabindex="-1"></a><span class="in">predictor_var &lt;- "z"  # The predictor variable</span></span>
+<span id="cb50-324"><a href="#cb50-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-325"><a href="#cb50-325" aria-hidden="true" tabindex="-1"></a><span class="in"># Repeat the experiment multiple times to get a distribution of results</span></span>
+<span id="cb50-326"><a href="#cb50-326" aria-hidden="true" tabindex="-1"></a><span class="in">n_reps &lt;- 1000</span></span>
+<span id="cb50-327"><a href="#cb50-327" aria-hidden="true" tabindex="-1"></a><span class="in">results &lt;- data.frame(</span></span>
+<span id="cb50-328"><a href="#cb50-328" aria-hidden="true" tabindex="-1"></a><span class="in">  rep = 1:n_reps,</span></span>
+<span id="cb50-329"><a href="#cb50-329" aria-hidden="true" tabindex="-1"></a><span class="in">  true_coverage = numeric(n_reps),</span></span>
+<span id="cb50-330"><a href="#cb50-330" aria-hidden="true" tabindex="-1"></a><span class="in">  loo_coverage = numeric(n_reps),</span></span>
+<span id="cb50-331"><a href="#cb50-331" aria-hidden="true" tabindex="-1"></a><span class="in">  diff_squared = numeric(n_reps)</span></span>
+<span id="cb50-332"><a href="#cb50-332" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb50-333"><a href="#cb50-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-334"><a href="#cb50-334" aria-hidden="true" tabindex="-1"></a><span class="in">for (rep in 1:n_reps) {</span></span>
+<span id="cb50-335"><a href="#cb50-335" aria-hidden="true" tabindex="-1"></a><span class="in">  # Randomly split the data into training (50%) and test (50%) sets</span></span>
+<span id="cb50-336"><a href="#cb50-336" aria-hidden="true" tabindex="-1"></a><span class="in">  n_total &lt;- nrow(cholost_clean)</span></span>
+<span id="cb50-337"><a href="#cb50-337" aria-hidden="true" tabindex="-1"></a><span class="in">  train_indices &lt;- sample(1:n_total, size = floor(n_total/2))</span></span>
+<span id="cb50-338"><a href="#cb50-338" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-339"><a href="#cb50-339" aria-hidden="true" tabindex="-1"></a><span class="in">  train_data &lt;- cholost_clean[train_indices, ]</span></span>
+<span id="cb50-340"><a href="#cb50-340" aria-hidden="true" tabindex="-1"></a><span class="in">  test_data &lt;- cholost_clean[-train_indices, ]</span></span>
+<span id="cb50-341"><a href="#cb50-341" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-342"><a href="#cb50-342" aria-hidden="true" tabindex="-1"></a><span class="in">  # Prepare matrices for training</span></span>
+<span id="cb50-343"><a href="#cb50-343" aria-hidden="true" tabindex="-1"></a><span class="in">  X_train &lt;- as.matrix(train_data[, predictor_var, drop = FALSE])</span></span>
+<span id="cb50-344"><a href="#cb50-344" aria-hidden="true" tabindex="-1"></a><span class="in">  Y_train &lt;- train_data[[response_var]]</span></span>
+<span id="cb50-345"><a href="#cb50-345" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-346"><a href="#cb50-346" aria-hidden="true" tabindex="-1"></a><span class="in">  # Prepare matrices for testing</span></span>
+<span id="cb50-347"><a href="#cb50-347" aria-hidden="true" tabindex="-1"></a><span class="in">  X_test &lt;- as.matrix(test_data[, predictor_var, drop = FALSE])</span></span>
+<span id="cb50-348"><a href="#cb50-348" aria-hidden="true" tabindex="-1"></a><span class="in">  Y_test &lt;- test_data[[response_var]]</span></span>
+<span id="cb50-349"><a href="#cb50-349" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-350"><a href="#cb50-350" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate true coverage on test set</span></span>
+<span id="cb50-351"><a href="#cb50-351" aria-hidden="true" tabindex="-1"></a><span class="in">  covered &lt;- 0</span></span>
+<span id="cb50-352"><a href="#cb50-352" aria-hidden="true" tabindex="-1"></a><span class="in">  n_test &lt;- nrow(test_data)</span></span>
+<span id="cb50-353"><a href="#cb50-353" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-354"><a href="#cb50-354" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:n_test) {</span></span>
+<span id="cb50-355"><a href="#cb50-355" aria-hidden="true" tabindex="-1"></a><span class="in">    tryCatch({</span></span>
+<span id="cb50-356"><a href="#cb50-356" aria-hidden="true" tabindex="-1"></a><span class="in">      pred_interval &lt;- calculate_quad_pred_interval(X_train, Y_train, X_test[i, , drop = FALSE], alpha = 0.05)</span></span>
+<span id="cb50-357"><a href="#cb50-357" aria-hidden="true" tabindex="-1"></a><span class="in">      if (Y_test[i] &gt;= pred_interval$lower &amp;&amp; Y_test[i] &lt;= pred_interval$upper) {</span></span>
+<span id="cb50-358"><a href="#cb50-358" aria-hidden="true" tabindex="-1"></a><span class="in">        covered &lt;- covered + 1</span></span>
+<span id="cb50-359"><a href="#cb50-359" aria-hidden="true" tabindex="-1"></a><span class="in">      }</span></span>
+<span id="cb50-360"><a href="#cb50-360" aria-hidden="true" tabindex="-1"></a><span class="in">    }, error = function(e) {</span></span>
+<span id="cb50-361"><a href="#cb50-361" aria-hidden="true" tabindex="-1"></a><span class="in">      cat("Error in test coverage calculation, iteration", i, ":", e$message, "\n")</span></span>
+<span id="cb50-362"><a href="#cb50-362" aria-hidden="true" tabindex="-1"></a><span class="in">    })</span></span>
+<span id="cb50-363"><a href="#cb50-363" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb50-364"><a href="#cb50-364" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-365"><a href="#cb50-365" aria-hidden="true" tabindex="-1"></a><span class="in">  true_cov &lt;- covered / n_test</span></span>
+<span id="cb50-366"><a href="#cb50-366" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-367"><a href="#cb50-367" aria-hidden="true" tabindex="-1"></a><span class="in">  # Calculate LOO coverage estimate on training set</span></span>
+<span id="cb50-368"><a href="#cb50-368" aria-hidden="true" tabindex="-1"></a><span class="in">  loo_cov &lt;- loo_coverage_probability(X_train, Y_train, alpha = 0.05)</span></span>
+<span id="cb50-369"><a href="#cb50-369" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb50-370"><a href="#cb50-370" aria-hidden="true" tabindex="-1"></a><span class="in">  # Store results</span></span>
+<span id="cb50-371"><a href="#cb50-371" aria-hidden="true" tabindex="-1"></a><span class="in">  results[rep, ] &lt;- c(rep, true_cov, loo_cov, (true_cov - loo_cov)^2)</span></span>
+<span id="cb50-372"><a href="#cb50-372" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb50-373"><a href="#cb50-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-374"><a href="#cb50-374" aria-hidden="true" tabindex="-1"></a><span class="in"># Calculate average results</span></span>
+<span id="cb50-375"><a href="#cb50-375" aria-hidden="true" tabindex="-1"></a><span class="in">avg_results &lt;- summarize(results,</span></span>
+<span id="cb50-376"><a href="#cb50-376" aria-hidden="true" tabindex="-1"></a><span class="in">                      mean_true_coverage = mean(true_coverage),</span></span>
+<span id="cb50-377"><a href="#cb50-377" aria-hidden="true" tabindex="-1"></a><span class="in">                      mean_loo_coverage = mean(loo_coverage),</span></span>
+<span id="cb50-378"><a href="#cb50-378" aria-hidden="true" tabindex="-1"></a><span class="in">                      sd_true_coverage = sd(true_coverage),</span></span>
+<span id="cb50-379"><a href="#cb50-379" aria-hidden="true" tabindex="-1"></a><span class="in">                      sd_loo_coverage = sd(loo_coverage),</span></span>
+<span id="cb50-380"><a href="#cb50-380" aria-hidden="true" tabindex="-1"></a><span class="in">                      mean_squared_diff = mean(diff_squared))</span></span>
+<span id="cb50-381"><a href="#cb50-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-382"><a href="#cb50-382" aria-hidden="true" tabindex="-1"></a><span class="in"># Create visualization</span></span>
+<span id="cb50-383"><a href="#cb50-383" aria-hidden="true" tabindex="-1"></a><span class="in">p1 &lt;- ggplot(results, aes(x = loo_coverage, y = true_coverage)) +</span></span>
+<span id="cb50-384"><a href="#cb50-384" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(alpha = 0.6) +</span></span>
+<span id="cb50-385"><a href="#cb50-385" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +</span></span>
+<span id="cb50-386"><a href="#cb50-386" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(title = "LOO Coverage Estimate vs. True Coverage",</span></span>
+<span id="cb50-387"><a href="#cb50-387" aria-hidden="true" tabindex="-1"></a><span class="in">       subtitle = paste("Cholost Dataset - Quadratic Model (", n_reps, "random splits)"),</span></span>
+<span id="cb50-388"><a href="#cb50-388" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "Leave-One-Out Coverage Estimate",</span></span>
+<span id="cb50-389"><a href="#cb50-389" aria-hidden="true" tabindex="-1"></a><span class="in">       y = "True Coverage on Test Set") +</span></span>
+<span id="cb50-390"><a href="#cb50-390" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_minimal()</span></span>
+<span id="cb50-391"><a href="#cb50-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-392"><a href="#cb50-392" aria-hidden="true" tabindex="-1"></a><span class="in"># Histogram of differences</span></span>
+<span id="cb50-393"><a href="#cb50-393" aria-hidden="true" tabindex="-1"></a><span class="in">results$difference &lt;- results$true_coverage - results$loo_coverage</span></span>
+<span id="cb50-394"><a href="#cb50-394" aria-hidden="true" tabindex="-1"></a><span class="in">p2 &lt;- ggplot(results, aes(x = difference)) +</span></span>
+<span id="cb50-395"><a href="#cb50-395" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_histogram(bins = 10, fill = "steelblue", color = "black") +</span></span>
+<span id="cb50-396"><a href="#cb50-396" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_vline(xintercept = 0, linetype = "dashed", color = "red") +</span></span>
+<span id="cb50-397"><a href="#cb50-397" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(title = "Distribution of Differences",</span></span>
+<span id="cb50-398"><a href="#cb50-398" aria-hidden="true" tabindex="-1"></a><span class="in">       subtitle = "True Coverage - LOO Coverage Estimate",</span></span>
+<span id="cb50-399"><a href="#cb50-399" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "Difference",</span></span>
+<span id="cb50-400"><a href="#cb50-400" aria-hidden="true" tabindex="-1"></a><span class="in">       y = "Count") +</span></span>
+<span id="cb50-401"><a href="#cb50-401" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_minimal()</span></span>
+<span id="cb50-402"><a href="#cb50-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-403"><a href="#cb50-403" aria-hidden="true" tabindex="-1"></a><span class="in"># Create a scatter plot with the data and prediction intervals</span></span>
+<span id="cb50-404"><a href="#cb50-404" aria-hidden="true" tabindex="-1"></a><span class="in"># (Using one random training set for visualization)</span></span>
+<span id="cb50-405"><a href="#cb50-405" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(123)</span></span>
+<span id="cb50-406"><a href="#cb50-406" aria-hidden="true" tabindex="-1"></a><span class="in">train_indices &lt;- sample(1:nrow(cholost_clean), size = floor(nrow(cholost_clean)/2))</span></span>
+<span id="cb50-407"><a href="#cb50-407" aria-hidden="true" tabindex="-1"></a><span class="in">train_data &lt;- cholost_clean[train_indices, ]</span></span>
+<span id="cb50-408"><a href="#cb50-408" aria-hidden="true" tabindex="-1"></a><span class="in">test_data &lt;- cholost_clean[-train_indices, ]</span></span>
+<span id="cb50-409"><a href="#cb50-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-410"><a href="#cb50-410" aria-hidden="true" tabindex="-1"></a><span class="in">X_train &lt;- as.matrix(train_data[, predictor_var, drop = FALSE])</span></span>
+<span id="cb50-411"><a href="#cb50-411" aria-hidden="true" tabindex="-1"></a><span class="in">Y_train &lt;- train_data[[response_var]]</span></span>
+<span id="cb50-412"><a href="#cb50-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-413"><a href="#cb50-413" aria-hidden="true" tabindex="-1"></a><span class="in"># Create a grid of values for z to show the prediction interval</span></span>
+<span id="cb50-414"><a href="#cb50-414" aria-hidden="true" tabindex="-1"></a><span class="in">z_grid &lt;- seq(min(cholost_clean$z), max(cholost_clean$z), length.out = 100)</span></span>
+<span id="cb50-415"><a href="#cb50-415" aria-hidden="true" tabindex="-1"></a><span class="in">X_grid &lt;- matrix(z_grid, ncol = 1)</span></span>
+<span id="cb50-416"><a href="#cb50-416" aria-hidden="true" tabindex="-1"></a><span class="in">predictions &lt;- data.frame(z = z_grid, y_pred = NA, lower = NA, upper = NA)</span></span>
+<span id="cb50-417"><a href="#cb50-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-418"><a href="#cb50-418" aria-hidden="true" tabindex="-1"></a><span class="in">for (i in 1:length(z_grid)) {</span></span>
+<span id="cb50-419"><a href="#cb50-419" aria-hidden="true" tabindex="-1"></a><span class="in">  pred_interval &lt;- calculate_quad_pred_interval(X_train, Y_train, X_grid[i, , drop = FALSE], alpha = 0.05)</span></span>
+<span id="cb50-420"><a href="#cb50-420" aria-hidden="true" tabindex="-1"></a><span class="in">  predictions$y_pred[i] &lt;- pred_interval$prediction</span></span>
+<span id="cb50-421"><a href="#cb50-421" aria-hidden="true" tabindex="-1"></a><span class="in">  predictions$lower[i] &lt;- pred_interval$lower</span></span>
+<span id="cb50-422"><a href="#cb50-422" aria-hidden="true" tabindex="-1"></a><span class="in">  predictions$upper[i] &lt;- pred_interval$upper</span></span>
+<span id="cb50-423"><a href="#cb50-423" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb50-424"><a href="#cb50-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-425"><a href="#cb50-425" aria-hidden="true" tabindex="-1"></a><span class="in">p3 &lt;- ggplot() +</span></span>
+<span id="cb50-426"><a href="#cb50-426" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data = train_data, aes(x = z, y = y, color = "Training Data")) +</span></span>
+<span id="cb50-427"><a href="#cb50-427" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_point(data = test_data, aes(x = z, y = y, color = "Test Data")) +</span></span>
+<span id="cb50-428"><a href="#cb50-428" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_line(data = predictions, aes(x = z, y = y_pred), color = "blue") +</span></span>
+<span id="cb50-429"><a href="#cb50-429" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_ribbon(data = predictions, aes(x = z, ymin = lower, ymax = upper), </span></span>
+<span id="cb50-430"><a href="#cb50-430" aria-hidden="true" tabindex="-1"></a><span class="in">              alpha = 0.2, fill = "blue") +</span></span>
+<span id="cb50-431"><a href="#cb50-431" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_color_manual(values = c("Training Data" = "black", "Test Data" = "red")) +</span></span>
+<span id="cb50-432"><a href="#cb50-432" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(title = "Cholost Dataset with Quadratic Prediction Intervals",</span></span>
+<span id="cb50-433"><a href="#cb50-433" aria-hidden="true" tabindex="-1"></a><span class="in">       subtitle = paste("True Coverage:", round(mean(results$true_coverage), 4), </span></span>
+<span id="cb50-434"><a href="#cb50-434" aria-hidden="true" tabindex="-1"></a><span class="in">                        "| LOO Estimate:", round(mean(results$loo_coverage), 4)),</span></span>
+<span id="cb50-435"><a href="#cb50-435" aria-hidden="true" tabindex="-1"></a><span class="in">       x = "Compliance", y = "Improvement", color = "Data Type") +</span></span>
+<span id="cb50-436"><a href="#cb50-436" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_minimal()</span></span>
+<span id="cb50-437"><a href="#cb50-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-438"><a href="#cb50-438" aria-hidden="true" tabindex="-1"></a><span class="in"># Display plots</span></span>
+<span id="cb50-439"><a href="#cb50-439" aria-hidden="true" tabindex="-1"></a><span class="in">#grid.arrange(p1, p2, p3, ncol = 2, layout_matrix = rbind(c(1,2), c(3,3)))</span></span>
+<span id="cb50-440"><a href="#cb50-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-441"><a href="#cb50-441" aria-hidden="true" tabindex="-1"></a><span class="in">print(p1)</span></span>
+<span id="cb50-442"><a href="#cb50-442" aria-hidden="true" tabindex="-1"></a><span class="in">print(p2)</span></span>
+<span id="cb50-443"><a href="#cb50-443" aria-hidden="true" tabindex="-1"></a><span class="in">print(p3)</span></span>
+<span id="cb50-444"><a href="#cb50-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-445"><a href="#cb50-445" aria-hidden="true" tabindex="-1"></a><span class="in"># Print summary statistics</span></span>
+<span id="cb50-446"><a href="#cb50-446" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\n--- Summary Statistics ---\n")</span></span>
+<span id="cb50-447"><a href="#cb50-447" aria-hidden="true" tabindex="-1"></a><span class="in">print(avg_results)</span></span>
+<span id="cb50-448"><a href="#cb50-448" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nMean True Coverage:", round(avg_results$mean_true_coverage, 4))</span></span>
+<span id="cb50-449"><a href="#cb50-449" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nMean LOO Coverage Estimate:", round(avg_results$mean_loo_coverage, 4))</span></span>
+<span id="cb50-450"><a href="#cb50-450" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nMean Squared Difference:", round(avg_results$mean_squared_diff, 6))</span></span>
+<span id="cb50-451"><a href="#cb50-451" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nStandard Deviation of True Coverage:", round(avg_results$sd_true_coverage, 4))</span></span>
+<span id="cb50-452"><a href="#cb50-452" aria-hidden="true" tabindex="-1"></a><span class="in">cat("\nStandard Deviation of LOO Coverage:", round(avg_results$sd_loo_coverage, 4))</span></span>
+<span id="cb50-453"><a href="#cb50-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-454"><a href="#cb50-454" aria-hidden="true" tabindex="-1"></a><span class="in"># Also fit a standard quadratic model once to examine the relationship</span></span>
+<span id="cb50-455"><a href="#cb50-455" aria-hidden="true" tabindex="-1"></a><span class="in">train_quad &lt;- lm(y ~ z + I(z^2), data = train_data)</span></span>
+<span id="cb50-456"><a href="#cb50-456" aria-hidden="true" tabindex="-1"></a><span class="in">summary(train_quad)</span></span>
+<span id="cb50-457"><a href="#cb50-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
