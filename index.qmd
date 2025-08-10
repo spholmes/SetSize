@@ -1,0 +1,27 @@
+---
+title: "Set Size Supplement"
+subtitle: "Estimating the Size of a Set Using Cascading Exclusion - Supplementary Materials"
+author: "Susan Holmes"
+---
+
+## Overview
+
+This repository contains all supplementary materials, code, and analyses for the paper "Estimating the Size of a Set Using Cascading Exclusion."
+
+## Navigation
+
+- **[Convex Hulls](analysis/01-convex-hulls.qmd)**: Geometric approaches to set size estimation
+- **[Coincidence Detection](analysis/02-coincidence-detection.qmd)**: Distance-based methods and Anderson-Darling analysis
+- **[Coincidence Detection on SILVA data](analysis/03-bacterialdata.qmd)**: Detection of coincident bacterial species from SILVA data example
+- **[Prediction Sets](analysis/04-prediction-sets-regression.qmd)**: Regression-based estimation approaches
+
+
+## Data
+
+- `silva_nr99_v138.2_toGenus_trainset.fa`: Original SILVA database version
+- `silva_aligned_bacteria_sequences.fasta`: Aligned bacterial DNA sequences
+- `silva_sequence_info.csv`: Sequence metadata and taxonomic information
+
+## Reproducibility
+
+Clone this repository and run `render` or `build`.

@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Estimating Set Size by Cascading Exclusion"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: analysis/01-convex-hulls.qmd
+        text: Convex Hulls
+      - href: analysis/02-coincidence-detection.qmd
+        text: Minimum Distance distributions
+      - href: analysis/03-bacterialdata.qmd
+        text: Bacterial Coincidence
+      - href: analysis/04-prediction-sets-regression.qmd
+        text: Prediction Sets
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: true
+    code-tools: true
+    code-copy: true
