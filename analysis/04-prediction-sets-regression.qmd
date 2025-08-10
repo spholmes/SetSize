@@ -4,7 +4,7 @@ subtitle: "Compliance in cholostyramine data"
 execute:
   warning: false
   message: false
-  cache: true
+  cache: false
 ---
 
 

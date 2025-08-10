@@ -4,7 +4,7 @@ subtitle: "Figures 1-4"
 execute:
   warning: false
   message: false
-  cache: true
+  cache: false
 ---
 
 ## A convex hull with 100 points (Figure 1)
