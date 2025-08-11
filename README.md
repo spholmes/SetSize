@@ -19,4 +19,4 @@ View the complete analyses at: https://spholmes.github.io/SetSize/
 **Estimating the size of a set using cascading exclusion**
 Sourav Chatterjee , Persi Diaconis , and Susan Holmes
 August 10, 2025
-[arxivlink to come](tba)
+[arxiv 2508.0591](https://arxiv.org/abs/2508.05901)
